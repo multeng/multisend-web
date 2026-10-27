@@ -7,10 +7,17 @@ import {
 } from 'react';
 import { Button, TextField } from '@radix-ui/themes';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import type { AuthenticatedSession, DraftDetail } from '../../api/generated';
+import type {
+  AuthenticatedSession,
+  DraftDetail,
+  DraftRecipient,
+} from '../../api/generated';
 import { ApiError } from '../../api/request';
 import { useAuthController } from '../auth/context';
 import { draftKeys, draftsApi } from './api';
+import { draftInputError } from './input';
+import { RecipientEditor } from '../recipients/RecipientEditor';
+import { EditorDialog } from '../recipients/EditorDialog';
 import styles from './DraftWorkspace.module.css';
 
 export function DraftWorkspace() {
@@ -35,6 +42,8 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
   const [error, setError] = useState<string | null>(null);
   const [conflict, setConflict] = useState(false);
   const [epoch, setEpoch] = useState(0);
+  const [dirty, setDirty] = useState(false);
+  const [discard, setDiscard] = useState<(() => void) | null>(null);
   const operations = useRef(new AbortController());
   const id = useId();
   useEffect(() => {
@@ -95,6 +104,11 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
       exact: true,
     });
     setSelected(draft.id);
+    setDirty(false);
+  }
+  function guarded(action: () => void) {
+    if (dirty) setDiscard(() => action);
+    else action();
   }
   return (
     <section className={styles.workspace} aria-labelledby="drafts-title">
@@ -136,7 +150,7 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
           onChange={(e) => setName(e.target.value)}
           placeholder="Например, выплаты команде"
         />
-        <Button type="submit" disabled={pending || !name.trim()}>
+        <Button type="submit" disabled={pending || dirty || !name.trim()}>
           Создать черновик
         </Button>
       </form>
@@ -158,9 +172,13 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
               aria-label={`Открыть ${draft.name}`}
               disabled={pending}
               onClick={() => {
-                setSelected(draft.id);
-                setError(null);
-                setConflict(false);
+                guarded(() => {
+                  setSelected(draft.id);
+                  setError(null);
+                  setConflict(false);
+                  setDirty(false);
+                  setEpoch((v) => v + 1);
+                });
               }}
             >
               Открыть
@@ -182,14 +200,15 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
           key={`${detail.data.id}:${detail.data.version}:${epoch}`}
           draft={detail.data}
           pending={pending}
-          onSave={(name) =>
+          onDirty={() => setDirty(true)}
+          onSave={(name, recipients) =>
             void run(async (signal) => {
               const d = await draftsApi.update(
                 detail.data.id,
                 {
                   version: detail.data.version,
                   name,
-                  recipients: detail.data.recipients,
+                  recipients,
                 },
                 session.csrfToken,
                 signal,
@@ -208,6 +227,7 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
               );
               signal.throwIfAborted();
               setSelected(null);
+              setDirty(false);
               client.removeQueries({
                 queryKey: draftKeys.detail(session.user, d.id),
                 exact: true,
@@ -228,12 +248,16 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
               variant="soft"
               disabled={pending}
               onClick={() =>
-                void run(async (signal) => {
-                  const result = await detail.refetch();
-                  signal.throwIfAborted();
-                  if (result.error) throw result.error;
-                  setEpoch((v) => v + 1);
-                })
+                guarded(
+                  () =>
+                    void run(async (signal) => {
+                      const result = await detail.refetch();
+                      signal.throwIfAborted();
+                      if (result.error) throw result.error;
+                      setEpoch((v) => v + 1);
+                      setDirty(false);
+                    }),
+                )
               }
             >
               Загрузить последнюю версию
@@ -242,9 +266,30 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
         </div>
       )}
       <p className={styles.note}>
-        Это сохранение черновика. Редактор получателей и импорт CSV появятся на
-        следующем этапе; отправка средств пока недоступна.
+        Сохраняется только черновик. Незавершённые поля допустимы; отправка
+        средств пока недоступна.
       </p>
+      {discard && (
+        <EditorDialog
+          title="Отбросить несохранённые изменения?"
+          onClose={() => setDiscard(null)}
+        >
+          <p>
+            Текущие изменения будут заменены. Перед этим можно закрыть окно и
+            экспортировать CSV.
+          </p>
+          <Button
+            color="red"
+            onClick={() => {
+              const action = discard;
+              setDiscard(null);
+              action();
+            }}
+          >
+            Отбросить изменения
+          </Button>
+        </EditorDialog>
+      )}
     </section>
   );
 }
@@ -253,37 +298,74 @@ function DraftEditor({
   pending,
   onSave,
   onDelete,
+  onDirty,
 }: {
   draft: DraftDetail;
   pending: boolean;
-  onSave: (name: string) => void;
+  onSave: (name: string, recipients: DraftRecipient[]) => void;
   onDelete: () => void;
+  onDirty: () => void;
 }) {
   const [name, setName] = useState(draft.name);
+  const [recipients, setRecipients] = useState(draft.recipients);
+  const [dirty, setDirty] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const id = useId();
+  const inputError = draftInputError({
+    name: name.trim(),
+    recipients,
+    version: draft.version,
+  });
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+    };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
+  function changed() {
+    setDirty(true);
+    onDirty();
+  }
   return (
     <div className={styles.editor}>
       <h3>Черновик · версия {draft.version}</h3>
-      <p>Получателей: {draft.recipients.length}</p>
+      <p>
+        {dirty
+          ? 'Есть несохранённые изменения.'
+          : 'Загружена серверная версия.'}{' '}
+        Получателей: {recipients.length}
+      </p>
+      <RecipientEditor
+        value={recipients}
+        disabled={pending}
+        onChange={(rows) => {
+          setRecipients(rows);
+          changed();
+        }}
+      />
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          onSave(name.trim());
+          onSave(name.trim(), recipients);
         }}
       >
         <label htmlFor={id}>Название черновика</label>
         <TextField.Root
           id={id}
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            changed();
+          }}
           maxLength={120}
           required
           disabled={pending}
         />
         <div className={styles.actions}>
-          <Button type="submit" disabled={pending || !name.trim()}>
-            Сохранить название
+          <Button type="submit" disabled={pending || Boolean(inputError)}>
+            Сохранить черновик
           </Button>
           <Button
             type="button"
@@ -296,6 +378,7 @@ function DraftEditor({
           </Button>
         </div>
       </form>
+      {inputError && <p role="alert">{inputError}</p>}
       {confirm && (
         <div className={styles.confirm}>
           <p>Удалить этот черновик без возможности восстановления?</p>

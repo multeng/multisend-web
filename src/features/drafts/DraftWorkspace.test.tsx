@@ -81,7 +81,7 @@ it('opens a private draft and saves its name without altering exact recipients',
   const name = await screen.findByLabelText('Название черновика');
   await event.clear(name);
   await event.type(name, 'Updated');
-  await event.click(screen.getByRole('button', { name: 'Сохранить название' }));
+  await event.click(screen.getByRole('button', { name: 'Сохранить черновик' }));
   await waitFor(() =>
     expect(fetcher.mock.calls.some(([, o]) => o?.method === 'PUT')).toBe(true),
   );
@@ -105,7 +105,7 @@ it('removes private data on logout and ignores a late save response', async () =
         resolve = r;
       }),
   );
-  await event.click(screen.getByRole('button', { name: 'Сохранить название' }));
+  await event.click(screen.getByRole('button', { name: 'Сохранить черновик' }));
   await act(async () => {
     await controller.logout();
   });
@@ -128,7 +128,7 @@ it('keeps unsaved input on a version conflict and offers explicit reload', async
   const name = await screen.findByLabelText('Название черновика');
   await event.clear(name);
   await event.type(name, 'Keep this');
-  await event.click(screen.getByRole('button', { name: 'Сохранить название' }));
+  await event.click(screen.getByRole('button', { name: 'Сохранить черновик' }));
   expect(await screen.findByRole('alert')).toHaveTextContent('изменён');
   expect(name).toHaveValue('Keep this');
   expect(
@@ -157,5 +157,65 @@ it('creates an empty draft and requires confirmation before deleting', async () 
     expect(fetcher.mock.calls.some(([, o]) => o?.method === 'DELETE')).toBe(
       true,
     ),
+  );
+});
+
+it('saves edited recipients as exact unfinished strings with the current version', async () => {
+  const { event, fetcher } = await setup();
+  await event.click(
+    await screen.findByRole('button', { name: 'Открыть Payroll' }),
+  );
+  const amount = await screen.findByLabelText('Сумма получателя 1, TON');
+  await event.clear(amount);
+  await event.type(amount, '0.000000000000000001');
+  await event.click(screen.getByRole('button', { name: 'Сохранить черновик' }));
+  await waitFor(() =>
+    expect(fetcher.mock.calls.some(([, o]) => o?.method === 'PUT')).toBe(true),
+  );
+  const sent = JSON.parse(
+    String(fetcher.mock.calls.find(([, o]) => o?.method === 'PUT')![1]!.body),
+  );
+  expect(sent.version).toBe('1');
+  expect(sent.recipients).toEqual([
+    { ...record.recipients[0], amount: '0.000000000000000001' },
+  ]);
+});
+
+it('keeps edited recipients on conflict until confirmed reload', async () => {
+  const { event } = await setup(true);
+  await event.click(
+    await screen.findByRole('button', { name: 'Открыть Payroll' }),
+  );
+  const amount = await screen.findByLabelText('Сумма получателя 1, TON');
+  await event.clear(amount);
+  await event.type(amount, '1.');
+  await event.click(screen.getByRole('button', { name: 'Сохранить черновик' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('изменён');
+  await event.click(
+    screen.getByRole('button', { name: 'Загрузить последнюю версию' }),
+  );
+  expect(amount).toHaveValue('1.');
+  expect(screen.getByRole('dialog')).toBeInTheDocument();
+});
+
+it('requires confirmation before reopening a draft with unsaved recipients', async () => {
+  const { event } = await setup();
+  await event.click(
+    await screen.findByRole('button', { name: 'Открыть Payroll' }),
+  );
+  const amount = await screen.findByLabelText('Сумма получателя 1, TON');
+  await event.clear(amount);
+  await event.type(amount, '2.');
+  await event.click(screen.getByRole('button', { name: 'Открыть Payroll' }));
+  expect(screen.getByRole('dialog')).toHaveTextContent('несохранённые');
+  expect(amount).toHaveValue('2.');
+  await event.click(screen.getByRole('button', { name: 'Закрыть' }));
+  expect(amount).toHaveValue('2.');
+  await event.click(screen.getByRole('button', { name: 'Открыть Payroll' }));
+  await event.click(
+    screen.getByRole('button', { name: 'Отбросить изменения' }),
+  );
+  expect(await screen.findByLabelText('Сумма получателя 1, TON')).toHaveValue(
+    record.recipients[0]!.amount,
   );
 });
