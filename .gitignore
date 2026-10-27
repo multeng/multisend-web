@@ -4,6 +4,7 @@ coverage/
 .cache/
 .superpowers/
 .artifacts/
+.netlify/
 .husky/_/
 *.tsbuildinfo
 *.local

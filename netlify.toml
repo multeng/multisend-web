@@ -1,0 +1,46 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24.22.1"
+  NPM_VERSION = "11.19.1"
+  VITE_PUBLIC_SITE_URL = "https://multisend-testnet-multeng.netlify.app"
+
+# Preserve the /api prefix required by the Go router. Do not add credentialed CORS.
+[[redirects]]
+  from = "/api/*"
+  to = "https://multisend-api-testnet.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api"
+  to = "https://multisend-api-testnet.onrender.com/api"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+
+# Wallets must be able to fetch public metadata from any origin.
+[[headers]]
+  for = "/tonconnect-manifest.json"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=300"
+
+[[headers]]
+  for = "/tonconnect-icon.png"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
