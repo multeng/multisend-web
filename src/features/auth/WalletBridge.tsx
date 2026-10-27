@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
+import { useI18n } from '../../i18n/context';
 import { TonConnectUIProvider, useTonConnectUI } from '@tonconnect/ui-react';
 import type { Connector } from './controller';
 
@@ -7,7 +8,11 @@ function Connected({
 }: {
   children: (connector: Connector) => ReactNode;
 }) {
-  const [ui] = useTonConnectUI();
+  const [ui, setOptions] = useTonConnectUI();
+  const { locale } = useI18n();
+  useEffect(() => {
+    setOptions({ language: locale });
+  }, [locale, setOptions]);
   return children(ui);
 }
 export default function WalletBridge({

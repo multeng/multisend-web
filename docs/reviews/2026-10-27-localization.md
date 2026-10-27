@@ -1,0 +1,13 @@
+# RU/EN localization verification
+
+The header now selects Russian or English without navigation. Saved explicit choice wins over the primary browser language; unsupported languages fall back to English. Only `ton-multisend.locale` is stored. Denied storage access does not prevent use. Document language and description update with the interface.
+
+The app uses a typed source-message catalog, with no dependency changes. Landing/readiness, auth, drafts, editor/import dialogs, accessibility labels and existing warnings/errors are translated. Dynamic record numbers and names are interpolated safely. Previously displayed friendly status messages are resolved at render so they also change language. Editable names, addresses, exact amount strings and comments are never translated. CSV headers and decimal rules stay fixed. TON Connect receives a language option update through the same SDK instance.
+
+TDD evidence: locale tests failed before the core module existed; three editor/error/dialog integration cases failed before translation wiring, then passed. Full npm check passes104 tests; npm audit reports0 known vulnerabilities. Added authenticated workspace coverage verifies that a Russian draft name, exact unfinished amount, session and private cache survive language switches without requests; explicit save retains the original strings. Existing keyboard test now verifies the new selector tab stop before keyboard retry.
+
+Edge verified both locales at320/360/390/768/1280px, with no horizontal overflow or runtime exceptions. Browser checks cover an exact amount, a modified open dialog, switching an existing CSV record error, locale persistence after reload and DOM lang. Screenshots inspected. Testing320px exposed an inherited badge margin incorrectly applied to the new selector; the failing responsive check passed after removing it. Static local-preview API/auth errors are expected and also translated; this is not a new real-wallet device login test.
+
+Fresh independent whole-branch review found no Critical/Important defects, confirmed source catalog coverage and stable identity/state. Its two minor observations were addressed during final verification: the narrow header margin was corrected with browser RED/GREEN, and an authenticated-draft locale-switch regression was added. No findings remain deferred.
+
+Native browser file/unload prompts follow browser settings; external wallet-app screens follow that wallet. Only the embedded TON Connect interface follows our selector. Backend/OpenAPI and session rules are unchanged. The known SDK chunk-size warning remains. No push, merge or deployment performed.

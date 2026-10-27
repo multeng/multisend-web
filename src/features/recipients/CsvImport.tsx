@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/context';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Button, TextArea } from '@radix-ui/themes';
 import type { DraftRecipient } from '../../api/generated';
@@ -15,6 +16,8 @@ export function CsvImport({
   onApply: (rows: DraftRecipient[], replace: boolean) => void;
   onClose: () => void;
 }) {
+  const { t, message: localize } = useI18n();
+
   const [source, setSource] = useState('');
   const [delimiter, setDelimiter] = useState<Delimiter>(',');
   const [staged, setStaged] = useState<DraftRecipient[] | null>(null);
@@ -39,7 +42,7 @@ export function CsvImport({
   const validation = staged ? validateRecipients(staged) : null;
   return (
     <EditorDialog
-      title="Импорт CSV"
+      title={t('Импорт CSV')}
       onClose={() => {
         generation.current++;
         onClose();
@@ -47,13 +50,15 @@ export function CsvImport({
     >
       <div className={styles.form}>
         <a href="/recipients-example.csv" download>
-          Скачать пример CSV
+          {t('Скачать пример CSV')}
         </a>
         <p>
-          UTF-8, заголовок <code>address,amount,comment</code>, до 200 строк и
-          256 КиБ. Выберите разделитель явно. Данные разбираются в браузере.
+          {t('UTF-8, заголовок')} <code>address,amount,comment</code>
+          {t(
+            ', до 200 строк и 256 КиБ. Выберите разделитель явно. Данные разбираются в браузере.',
+          )}
         </p>
-        <label htmlFor={id + 'delimiter'}>Разделитель</label>
+        <label htmlFor={id + 'delimiter'}>{t('Разделитель')}</label>
         <select
           id={id + 'delimiter'}
           value={delimiter}
@@ -62,11 +67,11 @@ export function CsvImport({
             reset();
           }}
         >
-          <option value=",">Запятая (,)</option>
-          <option value=";">Точка с запятой (;)</option>
-          <option value={'\t'}>Табуляция (TSV)</option>
+          <option value=",">{t('Запятая (,)')}</option>
+          <option value=";">{t('Точка с запятой (;)')}</option>
+          <option value={'\t'}>{t('Табуляция (TSV)')}</option>
         </select>
-        <label htmlFor={id + 'file'}>Файл CSV / TSV</label>
+        <label htmlFor={id + 'file'}>{t('Файл CSV / TSV')}</label>
         <input
           id={id + 'file'}
           type="file"
@@ -77,7 +82,7 @@ export function CsvImport({
             if (!file) return;
             const current = generation.current;
             if (file.size > MAX_CSV_BYTES) {
-              setError('CSV: максимум 256 КиБ.');
+              setError(t('CSV: максимум 256 КиБ.'));
               return;
             }
             setReading(true);
@@ -92,13 +97,13 @@ export function CsvImport({
               }
             } catch {
               if (current === generation.current)
-                setError('Не удалось прочитать файл как UTF-8.');
+                setError(t('Не удалось прочитать файл как UTF-8.'));
             } finally {
               if (current === generation.current) setReading(false);
             }
           }}
         />
-        <label htmlFor={id + 'source'}>Текст CSV</label>
+        <label htmlFor={id + 'source'}>{t('Текст CSV')}</label>
         <TextArea
           id={id + 'source'}
           rows={5}
@@ -118,41 +123,50 @@ export function CsvImport({
               setConfirmed(false);
             } catch (cause) {
               setStaged(null);
-              setError(cause instanceof Error ? cause.message : 'Ошибка CSV.');
+              setError(
+                cause instanceof Error ? cause.message : t('Ошибка CSV.'),
+              );
             }
           }}
         >
-          Проверить импорт
+          {t('Проверить импорт')}
         </Button>
-        {error && <p role="alert">{error}</p>}
+        {error && <p role="alert">{localize(error)}</p>}
         {staged && (
           <div className={styles.importPreview}>
-            <h3>Будет импортировано: {staged.length}</h3>
+            <h3>
+              {t('Будет импортировано:')} {staged.length}
+            </h3>
             <p>
-              Корректные суммы: {formatAmount(validation!.total)} TON. Ошибки
-              полей можно исправить после импорта; отправка недоступна.
+              {t('Корректные суммы:')} {formatAmount(validation!.total)}{' '}
+              {t(
+                'TON. Ошибки полей можно исправить после импорта; отправка недоступна.',
+              )}
             </p>
             <ol>
               {staged.slice(0, 3).map((row, index) => (
                 <li key={index}>
                   <code>{row.address}</code> — {row.amount} TON
                   {validation!.rows[index]!.errors.length > 0
-                    ? ' · требует исправления'
+                    ? t(' · требует исправления')
                     : ''}
                 </li>
               ))}
             </ol>
-            {staged.length > 3 && <p>И ещё {staged.length - 3} строк.</p>}
+            {staged.length > 3 && (
+              <p>{t('Дополнительных строк: {0}', { 0: staged.length - 3 })}</p>
+            )}
             <Button
               disabled={staged.length + count > 200}
               onClick={() => onApply(staged, false)}
             >
-              Добавить к списку
+              {t('Добавить к списку')}
             </Button>
             {staged.length + count > 200 && (
               <p role="alert">
-                Вместе получится больше 200 получателей. Выберите замену или
-                сократите список.
+                {t(
+                  'Вместе получится больше 200 получателей. Выберите замену или сократите список.',
+                )}
               </p>
             )}
             {count > 0 && (
@@ -162,7 +176,7 @@ export function CsvImport({
                   checked={confirmed}
                   onChange={(e) => setConfirmed(e.target.checked)}
                 />
-                Подтверждаю замену текущего списка
+                {t('Подтверждаю замену текущего списка')}
               </label>
             )}
             <Button
@@ -170,7 +184,7 @@ export function CsvImport({
               disabled={count > 0 && !confirmed}
               onClick={() => onApply(staged, true)}
             >
-              Заменить список
+              {t('Заменить список')}
             </Button>
           </div>
         )}

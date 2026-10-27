@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/context';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Button, TextField } from '@radix-ui/themes';
 import { useQueryClient } from '@tanstack/react-query';
@@ -12,6 +13,8 @@ import styles from './Editor.module.css';
 import workspaceStyles from '../drafts/DraftWorkspace.module.css';
 
 export function PublicWorkspace() {
+  const { t } = useI18n();
+
   const controller = useAuthController();
   const { session } = useSyncExternalStore(
     controller.subscribe,
@@ -33,12 +36,12 @@ export function PublicWorkspace() {
       {
         address: '0:' + '0'.repeat(64),
         amount: '0.1',
-        comment: 'Демонстрационный получатель',
+        comment: t('Демонстрационный получатель'),
       },
       {
         address: '0:' + '1'.repeat(64),
         amount: '0.000000001',
-        comment: 'Синтетический пример',
+        comment: t('Синтетический пример'),
       },
     ]);
     setExample(true);
@@ -50,11 +53,11 @@ export function PublicWorkspace() {
       className={workspaceStyles.workspace}
       aria-labelledby="prepare-title"
     >
-      <h2 id="prepare-title">Подготовить список выплат</h2>
+      <h2 id="prepare-title">{t('Подготовить список выплат')}</h2>
       <p>
-        Список хранится только в памяти этой вкладки. Чтобы не потерять его при
-        обновлении, экспортируйте CSV или явно сохраните личный черновик после
-        входа.
+        {t(
+          'Список хранится только в памяти этой вкладки. Чтобы не потерять его при обновлении, экспортируйте CSV или явно сохраните личный черновик после входа.',
+        )}
       </p>
       <Button
         variant="soft"
@@ -64,12 +67,13 @@ export function PublicWorkspace() {
           else demo();
         }}
       >
-        Попробовать на примере
+        {t('Попробовать на примере')}
       </Button>
       {example && (
         <p role="status">
-          Демонстрация: синтетические адреса, средства не отправляются. Замените
-          их своими получателями.
+          {t(
+            'Демонстрация: синтетические адреса, средства не отправляются. Замените их своими получателями.',
+          )}
         </p>
       )}
       <RecipientEditor
@@ -87,20 +91,22 @@ export function PublicWorkspace() {
         />
       ) : (
         <p>
-          Для сохранения на сервере войдите кошельком. До явного сохранения
-          получатели на сервер не отправляются.
+          {t(
+            'Для сохранения на сервере войдите кошельком. До явного сохранения получатели на сервер не отправляются.',
+          )}
         </p>
       )}
       {confirm && (
         <EditorDialog
-          title="Заменить список примером?"
+          title={t('Заменить список примером?')}
           onClose={() => setConfirm(false)}
         >
           <p>
-            Текущие строки будут заменены. Можно закрыть окно и сначала
-            экспортировать CSV.
+            {t(
+              'Текущие строки будут заменены. Можно закрыть окно и сначала экспортировать CSV.',
+            )}
           </p>
-          <Button onClick={demo}>Заменить примером</Button>
+          <Button onClick={demo}>{t('Заменить примером')}</Button>
         </EditorDialog>
       )}
     </section>
@@ -115,6 +121,8 @@ function SavePrepared({
   rows: DraftRecipient[];
   onPending: (pending: boolean) => void;
 }) {
+  const { t, message: localize } = useI18n();
+
   const [name, setName] = useState('');
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -154,7 +162,9 @@ function SavePrepared({
             signal.throwIfAborted();
             setSavedInput(currentInput);
             setMessage(
-              'Личный черновик сохранён. Откройте его в разделе «Личные черновики».',
+              t(
+                'Личный черновик сохранён. Откройте его в разделе «Личные черновики».',
+              ),
             );
             void client.invalidateQueries({
               queryKey: draftKeys.list(session.user),
@@ -168,7 +178,9 @@ function SavePrepared({
               return;
             }
             setMessage(
-              'Сохранение не подтверждено. Обновите личные черновики перед повтором, чтобы не создать копию.',
+              t(
+                'Сохранение не подтверждено. Обновите личные черновики перед повтором, чтобы не создать копию.',
+              ),
             );
           })
           .finally(() => {
@@ -179,7 +191,9 @@ function SavePrepared({
           });
       }}
     >
-      <label htmlFor="prepared-name">Название для сохранения списка</label>
+      <label htmlFor="prepared-name">
+        {t('Название для сохранения списка')}
+      </label>
       <TextField.Root
         id="prepared-name"
         value={name}
@@ -190,7 +204,7 @@ function SavePrepared({
           setMessage(null);
         }}
       />
-      {name && error && <p role="alert">{error}</p>}
+      {name && error && <p role="alert">{localize(error)}</p>}
       <Button
         type="submit"
         disabled={
@@ -200,10 +214,10 @@ function SavePrepared({
           savedInput === currentInput
         }
       >
-        {pending ? 'Сохраняем…' : 'Сохранить список в личные черновики'}
+        {pending ? t('Сохраняем…') : t('Сохранить список в личные черновики')}
       </Button>
       {message && messageInput === currentInput && (
-        <p role="status">{message}</p>
+        <p role="status">{localize(message)}</p>
       )}
     </form>
   );

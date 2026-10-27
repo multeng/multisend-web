@@ -10,6 +10,8 @@
   justify-content: space-between;
   gap: 16px;
   border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  padding: 12px 0;
 }
 .brand {
   display: flex;
@@ -213,9 +215,6 @@
     flex-basis: 100%;
     font-size: 18px;
     margin-bottom: 12px;
-  }
-  .header > :last-child {
-    margin-left: 48px;
   }
   .hero h1 {
     font-size: 36px;
