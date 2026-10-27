@@ -1,5 +1,10 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getReadiness } from './readiness';
+
+afterEach(() => {
+  vi.clearAllTimers();
+  vi.useRealTimers();
+});
 
 describe('getReadiness', () => {
   it.each([
@@ -16,7 +21,7 @@ describe('getReadiness', () => {
 
     await expect(getReadiness(signal)).resolves.toBe(status);
     expect(fetchMock).toHaveBeenCalledWith('/api/readyz', {
-      signal,
+      signal: expect.any(AbortSignal),
       cache: 'no-store',
       headers: { Accept: 'application/json' },
     });
@@ -52,5 +57,87 @@ describe('getReadiness', () => {
     await expect(getReadiness(new AbortController().signal)).rejects.toBe(
       abort,
     );
+  });
+
+  it('does not start a request with an already aborted signal', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response('{"status":"ready"}'));
+    vi.stubGlobal('fetch', fetchMock);
+    const controller = new AbortController();
+    controller.abort();
+    await expect(getReadiness(controller.signal)).rejects.toMatchObject({
+      name: 'AbortError',
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('cancels the HTTP request even when its transport ignores abort', async () => {
+    const fetchMock = vi.fn<
+      (url: string, options: RequestInit) => Promise<Response>
+    >(() => new Promise<Response>(() => {}));
+    vi.stubGlobal('fetch', fetchMock);
+    const controller = new AbortController();
+    const rejected = vi.fn();
+    void getReadiness(controller.signal).catch(rejected);
+    controller.abort();
+    expect(fetchMock.mock.calls[0]?.[1].signal?.aborted).toBe(true);
+    await vi.waitFor(() =>
+      expect(rejected).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'AbortError' }),
+      ),
+    );
+  });
+
+  it('times out a stalled transport and ignores a late successful response', async () => {
+    vi.useFakeTimers();
+    let resolve!: (value: Response) => void;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        () =>
+          new Promise<Response>((done) => {
+            resolve = done;
+          }),
+      ),
+    );
+    const rejected = vi.fn();
+    const fulfilled = vi.fn();
+    const request = getReadiness(new AbortController().signal).then(
+      fulfilled,
+      rejected,
+    );
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(rejected).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'TimeoutError' }),
+    );
+    resolve(new Response('{"status":"ready"}'));
+    await request;
+    expect(fulfilled).not.toHaveBeenCalled();
+  });
+
+  it('includes stalled JSON body parsing in the deadline', async () => {
+    vi.useFakeTimers();
+    const response = new Response('{"status":"ready"}');
+    vi.spyOn(response, 'json').mockReturnValue(new Promise(() => {}));
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response));
+    const rejected = vi.fn();
+    void getReadiness(new AbortController().signal).catch(rejected);
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(rejected).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'TimeoutError' }),
+    );
+  });
+
+  it('releases the deadline after a completed request', async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(new Response('{"status":"ready"}')),
+    );
+    await expect(getReadiness(new AbortController().signal)).resolves.toBe(
+      'ready',
+    );
+    expect(vi.getTimerCount()).toBe(0);
   });
 });

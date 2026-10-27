@@ -1,8 +1,33 @@
 import { StrictMode } from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { QueryClientProvider, useQuery } from '@tanstack/react-query';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
+import { createQueryClient } from './query-client';
+import { readinessQueryOptions } from '../api/readiness-query';
+
+const clients: ReturnType<typeof createQueryClient>[] = [];
+
+function renderApp(element = <App />, strict = false) {
+  const client = createQueryClient();
+  clients.push(client);
+  const tree = (
+    <QueryClientProvider client={client}>{element}</QueryClientProvider>
+  );
+  return render(strict ? <StrictMode>{tree}</StrictMode> : tree);
+}
+
+function ReadinessObserver() {
+  const query = useQuery(readinessQueryOptions);
+  return <output>{query.data}</output>;
+}
 
 function response(status = 200, body = 'ready') {
   return new Response(JSON.stringify({ status: body }), { status });
@@ -16,7 +41,11 @@ function deferred() {
   return { promise, resolve };
 }
 
-afterEach(() => vi.useRealTimers());
+afterEach(() => {
+  clients.forEach((client) => client.clear());
+  clients.length = 0;
+  vi.useRealTimers();
+});
 
 describe('App readiness', () => {
   it('shows checking while a request is pending', () => {
@@ -24,7 +53,7 @@ describe('App readiness', () => {
       'fetch',
       vi.fn(() => new Promise(() => {})),
     );
-    render(<App />);
+    renderApp();
     expect(screen.getByRole('status')).toHaveTextContent(
       'Проверяем соединение',
     );
@@ -40,7 +69,7 @@ describe('App readiness', () => {
     [502, 'error', 'Нет соединения с API'],
   ])('renders HTTP %s / %s honestly', async (http, body, copy) => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(http, body)));
-    render(<App />);
+    renderApp();
     expect(await screen.findByText(copy)).toBeVisible();
   });
 
@@ -51,7 +80,7 @@ describe('App readiness', () => {
       .mockResolvedValueOnce(response());
     vi.stubGlobal('fetch', fetchMock);
     const user = userEvent.setup();
-    render(<App />);
+    renderApp();
     await screen.findByText('Нет соединения с API');
     await user.tab();
     expect(
@@ -69,11 +98,12 @@ describe('App readiness', () => {
       .mockReturnValueOnce(first.promise)
       .mockReturnValueOnce(second.promise);
     vi.stubGlobal('fetch', fetchMock);
-    render(<App />);
+    renderApp();
     fireEvent.click(screen.getByRole('button', { name: 'Проверить снова' }));
     expect(fetchMock.mock.calls[0]?.[1].signal.aborted).toBe(true);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
     await act(async () => second.resolve(response()));
-    expect(screen.getByRole('status')).toHaveTextContent('API доступен');
+    await screen.findByText('API доступен');
     await act(async () => first.resolve(response(503, 'not_ready')));
     expect(screen.getByRole('status')).toHaveTextContent('API доступен');
   });
@@ -81,11 +111,7 @@ describe('App readiness', () => {
   it('cleans up StrictMode requests and cancels on unmount', async () => {
     const fetchMock = vi.fn(() => new Promise<Response>(() => {}));
     vi.stubGlobal('fetch', fetchMock);
-    const view = render(
-      <StrictMode>
-        <App />
-      </StrictMode>,
-    );
+    const view = renderApp(<App />, true);
     expect(fetchMock).toHaveBeenCalledTimes(2);
     const calls = fetchMock.mock.calls as unknown as [string, RequestInit][];
     expect(calls[0]?.[1].signal?.aborted).toBe(true);
@@ -98,9 +124,9 @@ describe('App readiness', () => {
     vi.useFakeTimers();
     const pending = deferred();
     vi.stubGlobal('fetch', vi.fn().mockReturnValue(pending.promise));
-    render(<App />);
+    renderApp();
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(10_000);
+      await vi.advanceTimersByTimeAsync(10_001);
     });
     expect(screen.getByRole('status')).toHaveTextContent(
       'Нет соединения с API',
@@ -109,5 +135,17 @@ describe('App readiness', () => {
     expect(screen.getByRole('status')).toHaveTextContent(
       'Нет соединения с API',
     );
+  });
+
+  it('shares its request with another Query observer', () => {
+    const fetchMock = vi.fn(() => new Promise<Response>(() => {}));
+    vi.stubGlobal('fetch', fetchMock);
+    renderApp(
+      <>
+        <App />
+        <ReadinessObserver />
+      </>,
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

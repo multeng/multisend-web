@@ -1,6 +1,32 @@
 export async function getReadiness(
   signal: AbortSignal,
 ): Promise<'ready' | 'not_ready'> {
+  signal.throwIfAborted();
+  const deadline = new AbortController();
+  const requestSignal = AbortSignal.any([signal, deadline.signal]);
+  const timeout = setTimeout(() => {
+    deadline.abort(
+      new DOMException('Readiness request timed out', 'TimeoutError'),
+    );
+  }, 10_000);
+
+  let onAbort = () => {};
+  const cancelled = new Promise<never>((_resolve, reject) => {
+    onAbort = () => reject(requestSignal.reason);
+    requestSignal.addEventListener('abort', onAbort, { once: true });
+  });
+
+  try {
+    return await Promise.race([requestReadiness(requestSignal), cancelled]);
+  } finally {
+    clearTimeout(timeout);
+    requestSignal.removeEventListener('abort', onAbort);
+  }
+}
+
+async function requestReadiness(
+  signal: AbortSignal,
+): Promise<'ready' | 'not_ready'> {
   const response = await fetch('/api/readyz', {
     signal,
     cache: 'no-store',
