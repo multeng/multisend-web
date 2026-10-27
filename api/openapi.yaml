@@ -1,0 +1,392 @@
+openapi: 3.1.1
+info:
+  title: TON Multisend API
+  version: 0.2.0
+  description: Testnet process/database health and wallet authentication.
+    Readiness is not payment success. Private operations require a valid
+    unrevoked server session.
+servers:
+  - url: http://127.0.0.1:8080
+    description: Local development; use a same-origin reverse proxy for deployment.
+security: []
+paths:
+  /api/healthz:
+    get:
+      operationId: checkHealth
+      summary: Check that the HTTP process is serving requests
+      responses:
+        '200':
+          description: The process is alive, including before readiness and during drain.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+    head:
+      operationId: checkHealthHeaders
+      summary: Check liveness without a response body
+      responses:
+        '200':
+          description: Same status and headers as GET, with no response body.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Content-Type:
+              $ref: '#/components/headers/JSONContentType'
+  /api/readyz:
+    get:
+      operationId: checkReadiness
+      summary: Check process initialization and PostgreSQL schema availability
+      responses:
+        '200':
+          description: This process is serving and PostgreSQL/schema checks pass.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ready'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '503':
+          description:
+            Process is not initialized, is draining, or database/schema is
+            unavailable.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotReady'
+    head:
+      operationId: checkReadinessHeaders
+      summary: Check readiness without a response body
+      responses:
+        '200':
+          description: Ready; same headers as GET, with no response body.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Content-Type:
+              $ref: '#/components/headers/JSONContentType'
+        '503':
+          description: Not ready; same headers as GET, with no response body.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Content-Type:
+              $ref: '#/components/headers/JSONContentType'
+  /api/auth/session:
+    get:
+      operationId: getAuthSession
+      summary: Read session state and establish anonymous CSRF/login state if needed
+      security: []
+      responses:
+        '200':
+          description: Current anonymous or authenticated browser session.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSession'
+        default: &a1
+          $ref: '#/components/responses/APIFailure'
+  /api/auth/challenge:
+    post:
+      operationId: createAuthChallenge
+      summary: Create a single-use browser-bound five-minute challenge
+      security: &a2
+        - sessionCookie: []
+          csrfToken: []
+      responses:
+        '200':
+          description: Challenge ready before opening the wallet connection modal.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthChallenge'
+        default: *a1
+  /api/auth/verify:
+    post:
+      operationId: verifyWalletProof
+      summary:
+        Verify wallet ownership, consume the challenge and rotate the browser
+        session
+      description:
+        Only testnet. Telegram wallets require active code-matching trusted
+        current state. On persistence failure reset with logout/session before a
+        new challenge; never replay the consumed proof.
+      security: *a2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyProofRequest'
+      responses:
+        '200':
+          description: Authenticated and durable server session.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticatedSession'
+        default: *a1
+  /api/auth/logout:
+    post:
+      operationId: logout
+      summary: Revoke the login family and remove its browser session
+      security: *a2
+      responses:
+        '204':
+          description: Session family revoked and cookie removed.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+        default: *a1
+components:
+  headers:
+    NoStore:
+      description: Health and readiness responses must not be cached.
+      schema:
+        type: string
+        const: no-store
+    JSONContentType:
+      description: JSON representation, even when HEAD omits the body.
+      schema:
+        type: string
+        const: application/json; charset=utf-8
+  responses:
+    MethodNotAllowed:
+      description:
+        'Unsupported methods return 405 with Allow: GET, HEAD. Unknown
+        paths return 404. Both use standard net/http plain-text error bodies.'
+      headers:
+        Allow:
+          schema:
+            type: string
+            example: GET, HEAD
+      content:
+        text/plain:
+          schema:
+            type: string
+    APIFailure:
+      description:
+        A bounded public error code. No credentials, proof, SQL or internal
+        diagnostic data is returned.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+  schemas:
+    Health:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          const: ok
+    Ready:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          const: ready
+    NotReady:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          const: not_ready
+    APIError:
+      type: object
+      additionalProperties: false
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required:
+            - code
+          properties:
+            code:
+              type: string
+              enum:
+                - invalid_request
+                - proof_invalid
+                - login_requires_reset
+                - unauthorized
+                - csrf_invalid
+                - origin_invalid
+                - rate_limited
+                - service_unavailable
+                - internal_error
+    AuthUser:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - address
+        - network
+      properties:
+        id:
+          type: string
+          format: uuid
+        address:
+          type: string
+          maxLength: 128
+        network:
+          type: string
+          const: '-3'
+    AnonymousSession:
+      type: object
+      additionalProperties: false
+      required:
+        - authenticated
+        - csrfToken
+      properties:
+        authenticated:
+          type: boolean
+          const: false
+        csrfToken:
+          type: string
+          minLength: 43
+          maxLength: 43
+    AuthenticatedSession:
+      type: object
+      additionalProperties: false
+      required:
+        - authenticated
+        - csrfToken
+        - user
+      properties:
+        authenticated:
+          type: boolean
+          const: true
+        csrfToken:
+          type: string
+          minLength: 43
+          maxLength: 43
+        user:
+          $ref: '#/components/schemas/AuthUser'
+    AuthSession:
+      oneOf:
+        - $ref: '#/components/schemas/AnonymousSession'
+        - $ref: '#/components/schemas/AuthenticatedSession'
+    AuthChallenge:
+      type: object
+      additionalProperties: false
+      required:
+        - payload
+        - expiresAt
+      properties:
+        payload:
+          type: string
+          minLength: 43
+          maxLength: 43
+          pattern: ^[A-Za-z0-9_-]{43}$
+        expiresAt:
+          type: string
+          format: date-time
+    TonProof:
+      type: object
+      additionalProperties: false
+      required:
+        - timestamp
+        - domain
+        - signature
+        - payload
+      properties:
+        timestamp:
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 9007199254740991
+            - type: string
+              pattern: ^[0-9]{1,19}$
+        domain:
+          type: object
+          additionalProperties: false
+          required:
+            - lengthBytes
+            - value
+          properties:
+            lengthBytes:
+              type: integer
+              minimum: 1
+              maximum: 128
+            value:
+              type: string
+              minLength: 1
+              maxLength: 128
+        signature:
+          type: string
+          format: byte
+        payload:
+          type: string
+          maxLength: 128
+    VerifyProofRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - address
+        - network
+        - stateInit
+        - proof
+      properties:
+        address:
+          type: string
+          maxLength: 128
+        network:
+          type: string
+          const: '-3'
+        publicKey:
+          type: string
+          pattern: ^[0-9a-fA-F]{64}$
+        stateInit:
+          type: string
+          format: byte
+          maxLength: 21848
+        proof:
+          $ref: '#/components/schemas/TonProof'
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: __Host-ton_multisend_testnet
+      description:
+        Secure host-only HTTPS session. Explicit loopback development uses
+        ton_multisend_testnet_dev. Anonymous login sessions are issued before
+        authentication.
+    csrfToken:
+      type: apiKey
+      in: header
+      name: X-CSRF-Token
+      description:
+        Browser-bound secret returned by GET /api/auth/session. Mutating
+        requests must also match configured Origin.

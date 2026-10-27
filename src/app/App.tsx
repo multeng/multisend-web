@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Badge, Button } from '@radix-ui/themes';
 import { readinessQueryOptions } from '../api/readiness-query';
@@ -27,7 +28,13 @@ const connectionCopy: Record<Connection, { title: string; detail: string }> = {
   },
 };
 
-export function App() {
+export function App({
+  account,
+  workspace,
+}: {
+  account?: ReactNode;
+  workspace?: ReactNode;
+}) {
   const queryClient = useQueryClient();
   const readiness = useQuery(readinessQueryOptions);
   const connection: Connection = readiness.isFetching
@@ -61,6 +68,8 @@ export function App() {
       </header>
 
       <main className={styles.main}>
+        {account}
+        {workspace}
         <section className={styles.hero} aria-labelledby="page-title">
           <p className={styles.eyebrow}>МЕНЬШЕ РУТИНЫ. БОЛЬШЕ КОНТРОЛЯ.</p>
           <h1 id="page-title">

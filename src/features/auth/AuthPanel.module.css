@@ -1,0 +1,22 @@
+.panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(1rem, 4vw, 2rem);
+  border: 1px solid var(--gray-6);
+  border-radius: 1.5rem;
+  background: var(--color-panel-solid);
+}
+.panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+.panel p {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+.address {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}

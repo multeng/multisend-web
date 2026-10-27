@@ -88,3 +88,13 @@ Dependencies are pinned and `package-lock.json` is committed. Use `npm ci` for c
 Dependency candidates are intentionally deferred until used: Zod for runtime schemas when API/form contracts exist; React Hook Form for recipient forms; Papa Parse for CSV import; TON Connect SDK for wallet flows; Playwright for browser/wallet journeys. Query's ESLint plugin is already enabled. Axios, a global state manager, commitlint and Query Devtools have no current requirement and are not installed.
 
 GitHub Actions runs the same checks for pushes and PRs with read-only permissions and no private backend access. A locally passing check is separate from a successful remote Actions run; the latter can only be reported after an actual push and run.
+
+## Wallet login
+
+The public API contract snapshot is `api/openapi.yaml`. Run `npm run api:generate` after an intentional contract update; `npm run api:check` regenerates in ignored temporary storage and compares without modifying tracked files. The normal check includes it and never accesses the private backend repository.
+
+Set `VITE_PUBLIC_SITE_URL` to the actual HTTPS origin when one is available, with no path/query. Vite then emits `tonconnect-manifest.json` and serves the committed 180px PNG icon. Leave it unset for local development without a public host: the interface explicitly disables wallet login. No application session tokens are stored by frontend code. TON Connect analytics is off; the SDK is loaded separately only when configured.
+
+Native fetch carries same-origin cookies, CSRF and cancellation with a ten-second deadline; Zod validates unknown responses. Login resets the previous family before issuing a challenge. Only server-verified proof authenticates; restoring a connection does not. Private server cache must use `['private', userId, address, '-3', ...]` and is removed on logout/account/network change. Authentication controller owns session rotation; TanStack Query owns private resource reads. No offline mutation queue or automatic write retries.
+
+Local signed-fixture/API tests and browser layout checks do not replace real TON wallet approval on desktop/iOS/Android with an HTTPS manifest. Publishing is a separate step.
