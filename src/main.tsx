@@ -7,6 +7,7 @@ import { createQueryClient } from './app/query-client';
 import { AuthProvider } from './features/auth/AuthProvider';
 import { AuthPanel } from './features/auth/AuthPanel';
 import { DraftWorkspace } from './features/drafts/DraftWorkspace';
+import { PublicWorkspace } from './features/recipients/PublicWorkspace';
 import './styles.css';
 
 const queryClient = createQueryClient();
@@ -21,7 +22,15 @@ createRoot(document.getElementById('root')!).render(
         appearance="light"
       >
         <AuthProvider>
-          <App account={<AuthPanel />} workspace={<DraftWorkspace />} />
+          <App
+            account={<AuthPanel />}
+            workspace={
+              <>
+                <DraftWorkspace />
+                <PublicWorkspace />
+              </>
+            }
+          />
         </AuthProvider>
       </Theme>
     </QueryClientProvider>
