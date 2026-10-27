@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/context';
 import { useId, useState } from 'react';
 import { Button, TextArea, TextField } from '@radix-ui/themes';
 import type { DraftRecipient } from '../../api/generated';
@@ -16,6 +17,8 @@ export function RecipientFields({
   onClose: () => void;
   isNew: boolean;
 }) {
+  const { t } = useI18n();
+
   const [row, setRow] = useState(initial);
   const id = useId();
   const bounded =
@@ -24,7 +27,7 @@ export function RecipientFields({
     textLength(row.comment) <= 500;
   return (
     <EditorDialog
-      title={isNew ? 'Новый получатель' : 'Подробности получателя'}
+      title={isNew ? t('Новый получатель') : t('Подробности получателя')}
       onClose={onClose}
     >
       <form
@@ -34,7 +37,7 @@ export function RecipientFields({
           if (bounded) onApply(row);
         }}
       >
-        <label htmlFor={id + 'address'}>Адрес получателя</label>
+        <label htmlFor={id + 'address'}>{t('Адрес получателя')}</label>
         <TextField.Root
           id={id + 'address'}
           value={row.address}
@@ -42,7 +45,7 @@ export function RecipientFields({
           autoComplete="off"
           spellCheck={false}
         />
-        <label htmlFor={id + 'amount'}>Сумма, TON</label>
+        <label htmlFor={id + 'amount'}>{t('Сумма, TON')}</label>
         <TextField.Root
           id={id + 'amount'}
           value={row.amount}
@@ -50,24 +53,26 @@ export function RecipientFields({
           inputMode="decimal"
           autoComplete="off"
         />
-        <label htmlFor={id + 'comment'}>Комментарий</label>
+        <label htmlFor={id + 'comment'}>{t('Комментарий')}</label>
         <TextArea
           id={id + 'comment'}
           value={row.comment}
           onChange={(e) => setRow({ ...row, comment: e.target.value })}
         />
         <p className={styles.muted}>
-          Адрес и сумма — до 128 символов, комментарий — до 500. Незавершённые
-          поля можно сохранить в черновике.
+          {t(
+            'Адрес и сумма — до 128 символов, комментарий — до 500. Незавершённые поля можно сохранить в черновике.',
+          )}
         </p>
         {!bounded && (
           <p role="alert">
-            Превышен лимит поля. Сократите текст, он не будет обрезан
-            автоматически.
+            {t(
+              'Превышен лимит поля. Сократите текст, он не будет обрезан автоматически.',
+            )}
           </p>
         )}
         <Button type="submit" disabled={!bounded}>
-          {isNew ? 'Добавить' : 'Применить изменения'}
+          {isNew ? t('Добавить') : t('Применить изменения')}
         </Button>
       </form>
     </EditorDialog>

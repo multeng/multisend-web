@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/context';
 import { useRef, type ReactNode } from 'react';
 import { Button, Dialog } from '@radix-ui/themes';
 import styles from './Editor.module.css';
@@ -11,6 +12,8 @@ export function EditorDialog({
   onClose: () => void;
   children: ReactNode;
 }) {
+  const { t } = useI18n();
+
   const focus = useRef({
     trigger: document.activeElement,
     fallback: document.activeElement
@@ -36,11 +39,11 @@ export function EditorDialog({
       >
         <Dialog.Title>{title}</Dialog.Title>
         <Dialog.Description>
-          Подготовка списка Testnet. Средства не отправляются.
+          {t('Подготовка списка Testnet. Средства не отправляются.')}
         </Dialog.Description>
         {children}
         <Button variant="soft" className={styles.close} onClick={onClose}>
-          Закрыть
+          {t('Закрыть')}
         </Button>
       </Dialog.Content>
     </Dialog.Root>

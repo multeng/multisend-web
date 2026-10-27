@@ -7,6 +7,8 @@ import { createQueryClient } from '../../app/query-client';
 import { AuthContext } from '../auth/context';
 import { AuthController } from '../auth/controller';
 import { DraftWorkspace } from './DraftWorkspace';
+import { I18nProvider } from '../../i18n/I18nProvider';
+import { LanguageSwitch } from '../../i18n/LanguageSwitch';
 
 const user = {
   id: '11111111-1111-4111-8111-111111111111',
@@ -23,7 +25,7 @@ const record = {
     { address: 'in progress', amount: '0.100000000000000001', comment: '' },
   ],
 };
-async function setup(conflict = false) {
+async function setup(conflict = false, localized = false) {
   const client = createQueryClient();
   const controller = new AuthController(null, () => client.clear(), {
     session: vi
@@ -66,7 +68,14 @@ async function setup(conflict = false) {
     <QueryClientProvider client={client}>
       <Theme>
         <AuthContext value={controller}>
-          <DraftWorkspace />
+          {localized ? (
+            <I18nProvider>
+              <LanguageSwitch />
+              <DraftWorkspace />
+            </I18nProvider>
+          ) : (
+            <DraftWorkspace />
+          )}
         </AuthContext>
       </Theme>
     </QueryClientProvider>,
@@ -91,6 +100,49 @@ it('opens a private draft and saves its name without altering exact recipients',
     version: '1',
     recipients: record.recipients,
   });
+});
+
+it('keeps authenticated draft name, exact edits and cache through locale switches', async () => {
+  vi.spyOn(Storage.prototype, 'getItem').mockReturnValue('ru');
+  const { event, fetcher, controller, client } = await setup(false, true);
+  const logout = vi.spyOn(controller, 'logout');
+  await event.click(
+    await screen.findByRole('button', { name: 'Открыть Payroll' }),
+  );
+  const name = await screen.findByLabelText('Название черновика');
+  await event.clear(name);
+  await event.type(name, 'Мой список');
+  const amount = screen.getByLabelText('Сумма получателя 1, TON');
+  await event.clear(amount);
+  await event.type(amount, '1.0000000000001');
+  const requests = fetcher.mock.calls.length;
+  await event.selectOptions(screen.getByRole('combobox'), 'en');
+  expect(screen.getByLabelText('Draft name')).toHaveValue('Мой список');
+  expect(screen.getByLabelText('Amount for recipient 1, TON')).toHaveValue(
+    '1.0000000000001',
+  );
+  expect(controller.getSnapshot().session?.authenticated).toBe(true);
+  expect(
+    client.getQueryCache().findAll({ queryKey: ['private', user.id] }).length,
+  ).toBeGreaterThan(0);
+  expect(fetcher.mock.calls).toHaveLength(requests);
+  expect(logout).not.toHaveBeenCalled();
+  await event.click(screen.getByRole('button', { name: 'Save draft' }));
+  await waitFor(() =>
+    expect(
+      fetcher.mock.calls.some(([, options]) => options?.method === 'PUT'),
+    ).toBe(true),
+  );
+  const saved = JSON.parse(
+    String(
+      fetcher.mock.calls.find(([, options]) => options?.method === 'PUT')![1]!
+        .body,
+    ),
+  );
+  expect(saved.name).toBe('Мой список');
+  expect(saved.recipients[0].amount).toBe('1.0000000000001');
+  await event.selectOptions(screen.getByRole('combobox'), 'ru');
+  expect(screen.getByLabelText('Название черновика')).toHaveValue('Мой список');
 });
 it('removes private data on logout and ignores a late save response', async () => {
   const { event, fetcher, controller, client } = await setup();

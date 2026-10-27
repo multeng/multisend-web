@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/context';
 import {
   useEffect,
   useId,
@@ -34,6 +35,8 @@ export function DraftWorkspace() {
   ) : null;
 }
 function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
+  const { t, message: localize } = useI18n();
+
   const controller = useAuthController();
   const client = useQueryClient();
   const [name, setName] = useState('');
@@ -87,10 +90,14 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
       setConflict(stale);
       setError(
         stale
-          ? 'Черновик уже изменён в другой вкладке. Ваш текст сохранён в форме.'
+          ? t(
+              'Черновик уже изменён в другой вкладке. Ваш текст сохранён в форме.',
+            )
           : cause instanceof ApiError && cause.code === 'quota_exceeded'
-            ? 'Достигнут лимит 100 черновиков. Удалите ненужные.'
-            : 'Не удалось подтвердить изменение. Обновите список перед повтором.',
+            ? t('Достигнут лимит 100 черновиков. Удалите ненужные.')
+            : t(
+                'Не удалось подтвердить изменение. Обновите список перед повтором.',
+              ),
       );
     } finally {
       if (!signal.aborted) setPending(false);
@@ -114,15 +121,15 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
     <section className={styles.workspace} aria-labelledby="drafts-title">
       <div className={styles.heading}>
         <div>
-          <h2 id="drafts-title">Личные черновики</h2>
-          <p>Сохраняются для вашего кошелька в testnet.</p>
+          <h2 id="drafts-title">{t('Личные черновики')}</h2>
+          <p>{t('Сохраняются для вашего кошелька в testnet.')}</p>
         </div>
         <Button
           variant="soft"
           disabled={pending || list.isFetching}
           onClick={() => void list.refetch()}
         >
-          Обновить список
+          {t('Обновить список')}
         </Button>
       </div>
       <form
@@ -140,7 +147,7 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
           });
         }}
       >
-        <label htmlFor={id}>Название нового черновика</label>
+        <label htmlFor={id}>{t('Название нового черновика')}</label>
         <TextField.Root
           id={id}
           value={name}
@@ -148,20 +155,20 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
           required
           disabled={pending}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Например, выплаты команде"
+          placeholder={t('Например, выплаты команде')}
         />
         <Button type="submit" disabled={pending || dirty || !name.trim()}>
-          Создать черновик
+          {t('Создать черновик')}
         </Button>
       </form>
-      {list.isPending && <p role="status">Загружаем черновики…</p>}
+      {list.isPending && <p role="status">{t('Загружаем черновики…')}</p>}
       {list.isError && (
         <p role="alert">
-          Не удалось загрузить список. Попробуйте обновить его.
+          {t('Не удалось загрузить список. Попробуйте обновить его.')}
         </p>
       )}
       {list.data?.items.length === 0 && (
-        <p>Пока нет черновиков. Создайте первый список.</p>
+        <p>{t('Пока нет черновиков. Создайте первый список.')}</p>
       )}
       <ul className={styles.list}>
         {list.data?.items.map((draft) => (
@@ -169,7 +176,7 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
             <span className={styles.draftName}>{draft.name}</span>
             <Button
               variant="outline"
-              aria-label={`Открыть ${draft.name}`}
+              aria-label={t('Открыть {0}', { 0: draft.name })}
               disabled={pending}
               onClick={() => {
                 guarded(() => {
@@ -181,17 +188,19 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
                 });
               }}
             >
-              Открыть
+              {t('Открыть')}
             </Button>
           </li>
         ))}
       </ul>
-      {selected && detail.isPending && <p role="status">Открываем черновик…</p>}
+      {selected && detail.isPending && (
+        <p role="status">{t('Открываем черновик…')}</p>
+      )}
       {selected && detail.isError && (
         <div role="alert">
-          <p>Не удалось открыть черновик. Возможно, он удалён.</p>
+          <p>{t('Не удалось открыть черновик. Возможно, он удалён.')}</p>
           <Button onClick={() => void detail.refetch()}>
-            Повторить открытие
+            {t('Повторить открытие')}
           </Button>
         </div>
       )}
@@ -242,7 +251,7 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
       )}
       {error && (
         <div role="alert">
-          <p>{error}</p>
+          <p>{localize(error)}</p>
           {conflict && (
             <Button
               variant="soft"
@@ -260,23 +269,25 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
                 )
               }
             >
-              Загрузить последнюю версию
+              {t('Загрузить последнюю версию')}
             </Button>
           )}
         </div>
       )}
       <p className={styles.note}>
-        Сохраняется только черновик. Незавершённые поля допустимы; отправка
-        средств пока недоступна.
+        {t(
+          'Сохраняется только черновик. Незавершённые поля допустимы; отправка средств пока недоступна.',
+        )}
       </p>
       {discard && (
         <EditorDialog
-          title="Отбросить несохранённые изменения?"
+          title={t('Отбросить несохранённые изменения?')}
           onClose={() => setDiscard(null)}
         >
           <p>
-            Текущие изменения будут заменены. Перед этим можно закрыть окно и
-            экспортировать CSV.
+            {t(
+              'Текущие изменения будут заменены. Перед этим можно закрыть окно и экспортировать CSV.',
+            )}
           </p>
           <Button
             color="red"
@@ -286,7 +297,7 @@ function OwnedWorkspace({ session }: { session: AuthenticatedSession }) {
               action();
             }}
           >
-            Отбросить изменения
+            {t('Отбросить изменения')}
           </Button>
         </EditorDialog>
       )}
@@ -306,6 +317,8 @@ function DraftEditor({
   onDelete: () => void;
   onDirty: () => void;
 }) {
+  const { t, message: localize } = useI18n();
+
   const [name, setName] = useState(draft.name);
   const [recipients, setRecipients] = useState(draft.recipients);
   const [dirty, setDirty] = useState(false);
@@ -330,12 +343,14 @@ function DraftEditor({
   }
   return (
     <div className={styles.editor}>
-      <h3>Черновик · версия {draft.version}</h3>
+      <h3>
+        {t('Черновик · версия')} {draft.version}
+      </h3>
       <p>
         {dirty
-          ? 'Есть несохранённые изменения.'
-          : 'Загружена серверная версия.'}{' '}
-        Получателей: {recipients.length}
+          ? t('Есть несохранённые изменения.')
+          : t('Загружена серверная версия.')}{' '}
+        {t('Получателей:')} {recipients.length}
       </p>
       <RecipientEditor
         value={recipients}
@@ -351,7 +366,7 @@ function DraftEditor({
           onSave(name.trim(), recipients);
         }}
       >
-        <label htmlFor={id}>Название черновика</label>
+        <label htmlFor={id}>{t('Название черновика')}</label>
         <TextField.Root
           id={id}
           value={name}
@@ -365,7 +380,7 @@ function DraftEditor({
         />
         <div className={styles.actions}>
           <Button type="submit" disabled={pending || Boolean(inputError)}>
-            Сохранить черновик
+            {t('Сохранить черновик')}
           </Button>
           <Button
             type="button"
@@ -374,24 +389,24 @@ function DraftEditor({
             disabled={pending}
             onClick={() => setConfirm(true)}
           >
-            Удалить черновик
+            {t('Удалить черновик')}
           </Button>
         </div>
       </form>
-      {inputError && <p role="alert">{inputError}</p>}
+      {inputError && <p role="alert">{localize(inputError)}</p>}
       {confirm && (
         <div className={styles.confirm}>
-          <p>Удалить этот черновик без возможности восстановления?</p>
+          <p>{t('Удалить этот черновик без возможности восстановления?')}</p>
           <div className={styles.actions}>
             <Button color="red" disabled={pending} onClick={onDelete}>
-              Удалить окончательно
+              {t('Удалить окончательно')}
             </Button>
             <Button
               variant="soft"
               disabled={pending}
               onClick={() => setConfirm(false)}
             >
-              Отмена
+              {t('Отмена')}
             </Button>
           </div>
         </div>

@@ -8,6 +8,7 @@ import { AuthProvider } from './features/auth/AuthProvider';
 import { AuthPanel } from './features/auth/AuthPanel';
 import { DraftWorkspace } from './features/drafts/DraftWorkspace';
 import { PublicWorkspace } from './features/recipients/PublicWorkspace';
+import { I18nProvider } from './i18n/I18nProvider';
 import './styles.css';
 
 const queryClient = createQueryClient();
@@ -21,17 +22,19 @@ createRoot(document.getElementById('root')!).render(
         radius="large"
         appearance="light"
       >
-        <AuthProvider>
-          <App
-            account={<AuthPanel />}
-            workspace={
-              <>
-                <DraftWorkspace />
-                <PublicWorkspace />
-              </>
-            }
-          />
-        </AuthProvider>
+        <I18nProvider>
+          <AuthProvider>
+            <App
+              account={<AuthPanel />}
+              workspace={
+                <>
+                  <DraftWorkspace />
+                  <PublicWorkspace />
+                </>
+              }
+            />
+          </AuthProvider>
+        </I18nProvider>
       </Theme>
     </QueryClientProvider>
   </StrictMode>,

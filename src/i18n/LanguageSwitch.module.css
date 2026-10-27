@@ -1,0 +1,14 @@
+.select {
+  min-height: 44px;
+  max-width: 8rem;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  color: var(--action);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: white;
+}
+.select:focus-visible {
+  outline: 3px solid var(--action);
+  outline-offset: 3px;
+}

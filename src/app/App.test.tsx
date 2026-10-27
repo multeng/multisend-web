@@ -84,6 +84,10 @@ describe('App readiness', () => {
     await screen.findByText('Нет соединения с API');
     await user.tab();
     expect(
+      screen.getByRole('combobox', { name: 'Язык интерфейса' }),
+    ).toHaveFocus();
+    await user.tab();
+    expect(
       screen.getByRole('button', { name: 'Проверить снова' }),
     ).toHaveFocus();
     await user.keyboard('{Enter}');

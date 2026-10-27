@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/context';
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { AuthController, type Connector } from './controller';
@@ -29,9 +30,13 @@ function SessionProvider({
   return <AuthContext value={controller}>{children}</AuthContext>;
 }
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { t } = useI18n();
+
   return manifest ? (
     <Suspense
-      fallback={<p role="status">Подготавливаем подключение кошелька…</p>}
+      fallback={
+        <p role="status">{t('Подготавливаем подключение кошелька…')}</p>
+      }
     >
       <WalletBridge manifestUrl={`${manifest.url}/tonconnect-manifest.json`}>
         {(connector) => (

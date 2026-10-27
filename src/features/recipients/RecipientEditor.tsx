@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/context';
 import { useId, useState } from 'react';
 import { Badge, Button, TextField } from '@radix-ui/themes';
 import type { DraftRecipient } from '../../api/generated';
@@ -18,6 +19,8 @@ export function RecipientEditor({
   onChange: (rows: DraftRecipient[]) => void;
   disabled?: boolean;
 }) {
+  const { t, message: localize } = useI18n();
+
   const [ids, setIds] = useState(() => value.map(() => crypto.randomUUID()));
   const [editing, setEditing] = useState<number | null>(null);
   const [removing, setRemoving] = useState<number | null>(null);
@@ -40,20 +43,22 @@ export function RecipientEditor({
     <div className={styles.editor} data-recipient-editor>
       <div className={styles.toolbar}>
         <Badge size="2">TON · Testnet</Badge>
-        <span>{value.length} / 200 получателей</span>
+        <span>
+          {value.length} {t('/ 200 получателей')}
+        </span>
         <Button
           data-editor-add
           disabled={disabled || value.length >= 200}
           onClick={() => setEditing(value.length)}
         >
-          Добавить получателя
+          {t('Добавить получателя')}
         </Button>
         <Button
           variant="soft"
           disabled={disabled}
           onClick={() => setImporting(true)}
         >
-          Импорт CSV / вставить
+          {t('Импорт CSV / вставить')}
         </Button>
         <Button
           variant="outline"
@@ -63,34 +68,38 @@ export function RecipientEditor({
             setExported(true);
           }}
         >
-          Экспорт CSV
+          {t('Экспорт CSV')}
         </Button>
       </div>
       {exported && (
         <p role="status">
-          CSV подготовлен. Для защиты таблиц поля, начинающиеся с = + - @ или
-          управляющих символов, получают апостроф.
+          {t(
+            'CSV подготовлен. Для защиты таблиц поля, начинающиеся с = + - @ или управляющих символов, получают апостроф.',
+          )}
         </p>
       )}
       {!value.length && (
         <p className={styles.empty}>
-          Начните с одного получателя или вставьте готовый CSV. Подключать
-          кошелёк для проверки списка не нужно.
+          {t(
+            'Начните с одного получателя или вставьте готовый CSV. Подключать кошелёк для проверки списка не нужно.',
+          )}
         </p>
       )}
       <ol className={styles.rows}>
         {value.map((row, index) => (
           <li key={ids[index]} className={styles.row}>
             <div className={styles.address}>
-              <span className={styles.rowLabel}>Получатель {index + 1}</span>
-              <code>{row.address || 'Адрес пока не указан'}</code>
+              <span className={styles.rowLabel}>
+                {t('Получатель')} {index + 1}
+              </span>
+              <code>{row.address || t('Адрес пока не указан')}</code>
               <span className={styles.muted}>
-                {row.comment || 'Без комментария'}
+                {row.comment || t('Без комментария')}
               </span>
             </div>
             <div>
               <label htmlFor={id + ids[index]}>
-                Сумма получателя {index + 1}, TON
+                {t('Сумма получателя')} {index + 1}, TON
               </label>
               <TextField.Root
                 id={id + ids[index]}
@@ -112,35 +121,37 @@ export function RecipientEditor({
               <Button
                 variant="soft"
                 disabled={disabled}
-                aria-label={`Изменить получателя ${index + 1}`}
+                aria-label={t('Изменить получателя {0}', { 0: index + 1 })}
                 onClick={() => setEditing(index)}
               >
-                Подробности
+                {t('Подробности')}
               </Button>
               <Button
                 variant="ghost"
                 color="red"
                 disabled={disabled}
-                aria-label={`Удалить получателя ${index + 1}`}
+                aria-label={t('Удалить получателя {0}', { 0: index + 1 })}
                 onClick={() => setRemoving(index)}
               >
-                Удалить
+                {t('Удалить')}
               </Button>
             </div>
             <div id={id + 'issues' + ids[index]} className={styles.issues}>
               {validation.rows[index]!.errors.map((error) => (
                 <p className={styles.error} key={error}>
-                  {error}
+                  {localize(error)}
                 </p>
               ))}
               {validation.rows[index]!.warnings.map((warning) => (
                 <p className={styles.warning} key={warning}>
-                  {warning}
+                  {localize(warning)}
                 </p>
               ))}
               {validation.rows[index]!.duplicate && (
                 <p className={styles.warning}>
-                  Повтор адреса: отдельная строка выплаты. Проверьте назначение.
+                  {t(
+                    'Повтор адреса: отдельная строка выплаты. Проверьте назначение.',
+                  )}
                 </p>
               )}
             </div>
@@ -158,29 +169,33 @@ export function RecipientEditor({
               setPreview(false);
             }}
           />
-          Оставить повторяющиеся адреса отдельными выплатами
+          {t('Оставить повторяющиеся адреса отдельными выплатами')}
         </label>
       )}
       <div className={styles.summary}>
         <p>
-          Итого по корректным суммам:{' '}
+          {t('Итого по корректным суммам:')}{' '}
           <strong>{formatAmount(validation.total)} TON</strong>
         </p>
         {validation.errors.map((error) => (
-          <p key={error}>{error}</p>
+          <p key={error}>{localize(error)}</p>
         ))}
         <Button
           disabled={disabled || !validation.valid || (duplicates && !ack)}
           onClick={() => setPreview(true)}
         >
-          Проверить список
+          {t('Проверить список')}
         </Button>
       </div>
       {preview && (
-        <section aria-label="Предпросмотр списка" className={styles.preview}>
-          <h3>Предпросмотр · Testnet</h3>
+        <section
+          aria-label={t('Предпросмотр списка')}
+          className={styles.preview}
+        >
+          <h3>{t('Предпросмотр · Testnet')}</h3>
           <p>
-            Получателям: <strong>{formatAmount(validation.total)} TON</strong>
+            {t('Получателям:')}{' '}
+            <strong>{formatAmount(validation.total)} TON</strong>
           </p>
           <ol>
             {value.map((row, index) => (
@@ -192,12 +207,14 @@ export function RecipientEditor({
             ))}
           </ol>
           <p>
-            Сетевые расходы, комиссия сервиса и число подписей ещё не
-            рассчитаны. Отправка средств недоступна.
+            {t(
+              'Сетевые расходы, комиссия сервиса и число подписей ещё не рассчитаны. Отправка средств недоступна.',
+            )}
           </p>
           <p>
-            Проверка формата не подтверждает владельца адреса или состояние
-            кошелька получателя.
+            {t(
+              'Проверка формата не подтверждает владельца адреса или состояние кошелька получателя.',
+            )}
           </p>
         </section>
       )}
@@ -219,10 +236,13 @@ export function RecipientEditor({
       )}
       {removing !== null && (
         <EditorDialog
-          title="Удалить получателя?"
+          title={t('Удалить получателя?')}
           onClose={() => setRemoving(null)}
         >
-          <p>Строка {removing + 1} будет удалена из текущего списка.</p>
+          <p>
+            {t('Строка')} {removing + 1}{' '}
+            {t('будет удалена из текущего списка.')}
+          </p>
           <Button
             color="red"
             onClick={() => {
@@ -233,7 +253,7 @@ export function RecipientEditor({
               setRemoving(null);
             }}
           >
-            Удалить
+            {t('Удалить')}
           </Button>
         </EditorDialog>
       )}

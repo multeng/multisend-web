@@ -1,3 +1,5 @@
+import { useI18n } from '../i18n/context';
+import { LanguageSwitch } from '../i18n/LanguageSwitch';
 import type { ReactNode } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Badge, Button } from '@radix-ui/themes';
@@ -35,6 +37,8 @@ export function App({
   account?: ReactNode;
   workspace?: ReactNode;
 }) {
+  const { t, message: localize } = useI18n();
+
   const queryClient = useQueryClient();
   const readiness = useQuery(readinessQueryOptions);
   const connection: Connection = readiness.isFetching
@@ -63,56 +67,63 @@ export function App({
           <span>TON Multisend</span>
         </div>
         <Badge color="blue" size="2" variant="soft">
-          Testnet · в разработке
+          {t('Testnet · в разработке')}
         </Badge>
+        <LanguageSwitch />
       </header>
 
       <main className={styles.main}>
         {account}
         {workspace}
         <section className={styles.hero} aria-labelledby="page-title">
-          <p className={styles.eyebrow}>МЕНЬШЕ РУТИНЫ. БОЛЬШЕ КОНТРОЛЯ.</p>
+          <p className={styles.eyebrow}>
+            {t('МЕНЬШЕ РУТИНЫ. БОЛЬШЕ КОНТРОЛЯ.')}
+          </p>
           <h1 id="page-title">
-            Массовые выплаты.
+            {t('Массовые выплаты.')}
             <br />
-            <span>С понятным порядком.</span>
+            <span>{t('С понятным порядком.')}</span>
           </h1>
           <p className={styles.intro}>
-            Готовим удобный способ отправлять TON нескольким получателям: от
-            первого адреса до проверки результата. С телефона и компьютера.
+            {t(
+              'Готовим удобный способ отправлять TON нескольким получателям: от первого адреса до проверки результата. С телефона и компьютера.',
+            )}
           </p>
           <div className={styles.stage}>
             <span className={styles.stageDot} aria-hidden="true" />
-            Сейчас создаём основу приложения
+            {t('Сейчас создаём основу приложения')}
           </div>
         </section>
 
         <section
           className={styles.features}
-          aria-label="Как будет работать сервис"
+          aria-label={t('Как будет работать сервис')}
         >
           <article className={styles.feature}>
-            <span className={styles.number}>01 / Подготовить</span>
-            <h2>Один список получателей</h2>
+            <span className={styles.number}>{t('01 / Подготовить')}</span>
+            <h2>{t('Один список получателей')}</h2>
             <p>
-              Добавляйте адреса вручную или загружайте CSV. Редактируйте список
-              даже с телефона.
+              {t(
+                'Добавляйте адреса вручную или загружайте CSV. Редактируйте список даже с телефона.',
+              )}
             </p>
           </article>
           <article className={styles.feature}>
-            <span className={styles.number}>02 / Проверить</span>
-            <h2>Ошибки видны заранее</h2>
+            <span className={styles.number}>{t('02 / Проверить')}</span>
+            <h2>{t('Ошибки видны заранее')}</h2>
             <p>
-              Проверка адресов, сумм и повторов поможет подготовить выплаты
-              перед подписью.
+              {t(
+                'Проверка адресов, сумм и повторов поможет подготовить выплаты перед подписью.',
+              )}
             </p>
           </article>
           <article className={styles.feature}>
-            <span className={styles.number}>03 / Подписать</span>
-            <h2>Контроль у вашего кошелька</h2>
+            <span className={styles.number}>{t('03 / Подписать')}</span>
+            <h2>{t('Контроль у вашего кошелька')}</h2>
             <p>
-              Вы подтверждаете переводы своим кошельком. Сервису не нужны ваши
-              приватные ключи.
+              {t(
+                'Вы подтверждаете переводы своим кошельком. Сервису не нужны ваши приватные ключи.',
+              )}
             </p>
           </article>
         </section>
@@ -122,8 +133,8 @@ export function App({
           aria-labelledby="connection-title"
         >
           <div className={styles.connectionHeading}>
-            <p className={styles.eyebrow}>ЛОКАЛЬНЫЙ КАРКАС</p>
-            <h2 id="connection-title">Соединение с сервером</h2>
+            <p className={styles.eyebrow}>{t('ЛОКАЛЬНЫЙ КАРКАС')}</p>
+            <h2 id="connection-title">{t('Соединение с сервером')}</h2>
           </div>
           <div className={styles.connectionBody}>
             <div
@@ -138,9 +149,9 @@ export function App({
                   data-state={connection}
                   aria-hidden="true"
                 />
-                {copy.title}
+                {localize(copy.title)}
               </span>
-              <p>{copy.detail}</p>
+              <p>{localize(copy.detail)}</p>
             </div>
             <Button
               size="3"
@@ -148,7 +159,7 @@ export function App({
               className={styles.retry}
               onClick={checkAgain}
             >
-              Проверить снова
+              {t('Проверить снова')}
             </Button>
           </div>
         </section>
@@ -157,9 +168,13 @@ export function App({
       <footer className={styles.footer}>
         <span>TON Multisend</span>
         <p>
-          Разработка начинается с testnet. Отправка средств пока недоступна.
+          {t(
+            'Разработка начинается с testnet. Отправка средств пока недоступна.',
+          )}
         </p>
-        <p>Независимый проект. Не связан с TON Foundation или Telegram.</p>
+        <p>
+          {t('Независимый проект. Не связан с TON Foundation или Telegram.')}
+        </p>
       </footer>
     </div>
   );
