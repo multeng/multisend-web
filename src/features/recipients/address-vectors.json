@@ -1,0 +1,42 @@
+[
+  {
+    "friendly": "UQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoYhn",
+    "raw": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+    "testOnly": false
+  },
+  {
+    "friendly": "EQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhodWi",
+    "raw": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+    "testOnly": false
+  },
+  {
+    "friendly": "0QChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoTPt",
+    "raw": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+    "testOnly": true
+  },
+  {
+    "friendly": "kQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoW4o",
+    "raw": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+    "testOnly": true
+  },
+  {
+    "friendly": "Uf-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoXcv",
+    "raw": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+    "testOnly": false
+  },
+  {
+    "friendly": "Ef-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoSrq",
+    "raw": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+    "testOnly": false
+  },
+  {
+    "friendly": "0f-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhocyl",
+    "raw": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+    "testOnly": true
+  },
+  {
+    "friendly": "kf-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoZFg",
+    "raw": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+    "testOnly": true
+  }
+]
