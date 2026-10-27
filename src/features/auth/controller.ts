@@ -128,6 +128,8 @@ export class AuthController {
         payload: challenge.payload,
         expiresAt: Date.parse(challenge.expiresAt),
       };
+      // Configure before connecting only: even clearing these parameters can
+      // restart the SDK's QR connection. Each new login replaces the payload.
       this.connector.setConnectRequestParameters({
         state: 'ready',
         value: { tonProof: challenge.payload },
@@ -146,7 +148,6 @@ export class AuthController {
   }
   private fail(error: string) {
     this.pending = undefined;
-    this.connector?.setConnectRequestParameters(null);
     this.update({ session: this.anonymous(), phase: 'error', error });
   }
   private async walletChanged(wallet: ConnectedWallet | null) {
@@ -187,7 +188,6 @@ export class AuthController {
         )
           throw new Error('Wallet changed');
         this.pending = undefined;
-        this.connector?.setConnectRequestParameters(null);
         this.update({ session, phase: 'idle', error: null });
       } catch {
         if (generation === this.generation)
