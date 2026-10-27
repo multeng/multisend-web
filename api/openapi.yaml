@@ -1,10 +1,9 @@
 openapi: 3.1.1
 info:
   title: TON Multisend API
-  version: 0.2.0
-  description: Testnet process/database health and wallet authentication.
-    Readiness is not payment success. Private operations require a valid
-    unrevoked server session.
+  version: 0.3.0
+  description: Testnet health, wallet authentication and private durable
+    unfinished drafts. No payout execution.
 servers:
   - url: http://127.0.0.1:8080
     description: Local development; use a same-origin reverse proxy for deployment.
@@ -157,6 +156,111 @@ paths:
             Cache-Control:
               $ref: '#/components/headers/NoStore'
         default: *a1
+  /api/drafts:
+    get:
+      operationId: listDrafts
+      summary: List at most100 owned draft metadata records, newest update first
+      security: &a4
+        - sessionCookie: []
+      responses:
+        '200':
+          description: Owned metadata only.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftList'
+        default: &a3
+          $ref: '#/components/responses/APIFailure'
+    post:
+      operationId: createDraft
+      summary: Create an unfinished private draft
+      security: &a5
+        - sessionCookie: []
+          csrfToken: []
+      requestBody:
+        required: true
+        description: Maximum JSON body64KiB. Storage limits are not payout limits.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftInput'
+      responses:
+        '201':
+          description: Durable draft.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftDetail'
+        default: *a3
+  /api/drafts/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: getDraft
+      summary: Read an owned draft; foreign and missing identifiers both return404
+      security: *a4
+      responses:
+        '200':
+          description: Owned draft.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftDetail'
+        default: *a3
+    put:
+      operationId: updateDraft
+      summary: Replace unfinished input only when the owned version matches
+      security: *a5
+      requestBody:
+        required: true
+        description: Maximum JSON body64KiB. Storage limits are not payout limits.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftUpdate'
+      responses:
+        '200':
+          description: Saved with a new version;409 does not overwrite newer data.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftDetail'
+        default: *a3
+    delete:
+      operationId: deleteDraft
+      summary: Delete an owned draft only when its version matches
+      security: *a5
+      parameters:
+        - name: version
+          in: query
+          required: true
+          schema: &a6
+            type: string
+            pattern: ^[1-9][0-9]{0,17}$
+      responses:
+        '204':
+          description: Deleted.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+        default: *a3
 components:
   headers:
     NoStore:
@@ -246,6 +350,9 @@ components:
                 - rate_limited
                 - service_unavailable
                 - internal_error
+                - not_found
+                - conflict
+                - quota_exceeded
     AuthUser:
       type: object
       additionalProperties: false
@@ -374,6 +481,94 @@ components:
           maxLength: 21848
         proof:
           $ref: '#/components/schemas/TonProof'
+    DraftRecipient:
+      type: object
+      additionalProperties: false
+      required:
+        - address
+        - amount
+        - comment
+      properties:
+        address:
+          type: string
+          maxLength: 128
+        amount:
+          type: string
+          maxLength: 128
+          description:
+            Unfinished exact user input, never interpreted as a JavaScript
+            number or a validated payout.
+        comment:
+          type: string
+          maxLength: 500
+    DraftInput:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - recipients
+      properties:
+        name: &a7
+          type: string
+          minLength: 1
+          maxLength: 120
+        recipients: &a8
+          type: array
+          maxItems: 200
+          items:
+            $ref: '#/components/schemas/DraftRecipient'
+    DraftUpdate:
+      type: object
+      additionalProperties: false
+      required:
+        - version
+        - name
+        - recipients
+      properties:
+        version: *a6
+        name: *a7
+        recipients: *a8
+    DraftMetadata:
+      type: object
+      required:
+        - id
+        - name
+        - version
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        version: *a6
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    DraftDetail:
+      allOf:
+        - $ref: '#/components/schemas/DraftMetadata'
+        - type: object
+          required:
+            - recipients
+          properties:
+            recipients: *a8
+    DraftList:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/DraftMetadata'
   securitySchemes:
     sessionCookie:
       type: apiKey

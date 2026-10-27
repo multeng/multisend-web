@@ -98,3 +98,7 @@ Set `VITE_PUBLIC_SITE_URL` to the actual HTTPS origin when one is available, wit
 Native fetch carries same-origin cookies, CSRF and cancellation with a ten-second deadline; Zod validates unknown responses. Login resets the previous family before issuing a challenge. Only server-verified proof authenticates; restoring a connection does not. Private server cache must use `['private', userId, address, '-3', ...]` and is removed on logout/account/network change. Authentication controller owns session rotation; TanStack Query owns private resource reads. No offline mutation queue or automatic write retries.
 
 Local signed-fixture/API tests and browser layout checks do not replace real TON wallet approval on desktop/iOS/Android with an HTTPS manifest. Publishing is a separate step.
+
+## Private drafts
+
+After verified testnet login, the private workspace creates empty drafts, lists and opens saved records, renames while preserving recipient data, and confirms deletion. Conflicting versions keep the entered name and offer explicit reload. The shell resets with identity changes and ignores late writes after logout. Full recipient editing, CSV import and payout execution are subsequent stages. Draft storage limits (100 records,200 rows,64KiB) are separate from future payout limits.

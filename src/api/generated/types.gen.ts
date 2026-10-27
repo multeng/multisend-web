@@ -27,7 +27,10 @@ export type ApiError = {
       | 'origin_invalid'
       | 'rate_limited'
       | 'service_unavailable'
-      | 'internal_error';
+      | 'internal_error'
+      | 'not_found'
+      | 'conflict'
+      | 'quota_exceeded';
   };
 };
 
@@ -71,6 +74,42 @@ export type VerifyProofRequest = {
   publicKey?: string;
   stateInit: string;
   proof: TonProof;
+};
+
+export type DraftRecipient = {
+  address: string;
+  /**
+   * Unfinished exact user input, never interpreted as a JavaScript number or a validated payout.
+   */
+  amount: string;
+  comment: string;
+};
+
+export type DraftInput = {
+  name: string;
+  recipients: Array<DraftRecipient>;
+};
+
+export type DraftUpdate = {
+  version: string;
+  name: string;
+  recipients: Array<DraftRecipient>;
+};
+
+export type DraftMetadata = {
+  id: string;
+  name: string;
+  version: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type DraftDetail = DraftMetadata & {
+  recipients: Array<DraftRecipient>;
+};
+
+export type DraftList = {
+  items: Array<DraftMetadata>;
 };
 
 export type CheckHealthData = {
@@ -270,3 +309,145 @@ export type LogoutResponses = {
 };
 
 export type LogoutResponse = LogoutResponses[keyof LogoutResponses];
+
+export type ListDraftsData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/drafts';
+};
+
+export type ListDraftsErrors = {
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  default: ApiError;
+};
+
+export type ListDraftsError = ListDraftsErrors[keyof ListDraftsErrors];
+
+export type ListDraftsResponses = {
+  /**
+   * Owned metadata only.
+   */
+  200: DraftList;
+};
+
+export type ListDraftsResponse = ListDraftsResponses[keyof ListDraftsResponses];
+
+export type CreateDraftData = {
+  /**
+   * Maximum JSON body64KiB. Storage limits are not payout limits.
+   */
+  body: DraftInput;
+  path?: never;
+  query?: never;
+  url: '/api/drafts';
+};
+
+export type CreateDraftErrors = {
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  default: ApiError;
+};
+
+export type CreateDraftError = CreateDraftErrors[keyof CreateDraftErrors];
+
+export type CreateDraftResponses = {
+  /**
+   * Durable draft.
+   */
+  201: DraftDetail;
+};
+
+export type CreateDraftResponse =
+  CreateDraftResponses[keyof CreateDraftResponses];
+
+export type DeleteDraftData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query: {
+    version: string;
+  };
+  url: '/api/drafts/{id}';
+};
+
+export type DeleteDraftErrors = {
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  default: ApiError;
+};
+
+export type DeleteDraftError = DeleteDraftErrors[keyof DeleteDraftErrors];
+
+export type DeleteDraftResponses = {
+  /**
+   * Deleted.
+   */
+  204: void;
+};
+
+export type DeleteDraftResponse =
+  DeleteDraftResponses[keyof DeleteDraftResponses];
+
+export type GetDraftData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/drafts/{id}';
+};
+
+export type GetDraftErrors = {
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  default: ApiError;
+};
+
+export type GetDraftError = GetDraftErrors[keyof GetDraftErrors];
+
+export type GetDraftResponses = {
+  /**
+   * Owned draft.
+   */
+  200: DraftDetail;
+};
+
+export type GetDraftResponse = GetDraftResponses[keyof GetDraftResponses];
+
+export type UpdateDraftData = {
+  /**
+   * Maximum JSON body64KiB. Storage limits are not payout limits.
+   */
+  body: DraftUpdate;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/api/drafts/{id}';
+};
+
+export type UpdateDraftErrors = {
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  default: ApiError;
+};
+
+export type UpdateDraftError = UpdateDraftErrors[keyof UpdateDraftErrors];
+
+export type UpdateDraftResponses = {
+  /**
+   * Saved with a new version;409 does not overwrite newer data.
+   */
+  200: DraftDetail;
+};
+
+export type UpdateDraftResponse =
+  UpdateDraftResponses[keyof UpdateDraftResponses];

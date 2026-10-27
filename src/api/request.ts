@@ -30,6 +30,7 @@ const errorBody = z.object({
       'internal_error',
       'not_found',
       'conflict',
+      'quota_exceeded',
     ]),
   }),
 });
