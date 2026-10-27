@@ -2,10 +2,12 @@ export async function getReadiness(
   signal: AbortSignal,
 ): Promise<'ready' | 'not_ready'> {
   signal.throwIfAborted();
-  const deadline = new AbortController();
-  const requestSignal = AbortSignal.any([signal, deadline.signal]);
+  const request = new AbortController();
+  const requestSignal = request.signal;
+  const forwardAbort = () => request.abort(signal.reason);
+  signal.addEventListener('abort', forwardAbort, { once: true });
   const timeout = setTimeout(() => {
-    deadline.abort(
+    request.abort(
       new DOMException('Readiness request timed out', 'TimeoutError'),
     );
   }, 10_000);
@@ -20,6 +22,7 @@ export async function getReadiness(
     return await Promise.race([requestReadiness(requestSignal), cancelled]);
   } finally {
     clearTimeout(timeout);
+    signal.removeEventListener('abort', forwardAbort);
     requestSignal.removeEventListener('abort', onAbort);
   }
 }

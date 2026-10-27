@@ -140,4 +140,35 @@ describe('getReadiness', () => {
     );
     expect(vi.getTimerCount()).toBe(0);
   });
+
+  it('works in supported browsers without AbortSignal.any', async () => {
+    const descriptor = Object.getOwnPropertyDescriptor(AbortSignal, 'any')!;
+    Object.defineProperty(AbortSignal, 'any', {
+      configurable: true,
+      value: undefined,
+    });
+    try {
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValue(new Response('{"status":"ready"}'));
+      vi.stubGlobal('fetch', fetchMock);
+      await expect(getReadiness(new AbortController().signal)).resolves.toBe(
+        'ready',
+      );
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    } finally {
+      Object.defineProperty(AbortSignal, 'any', descriptor);
+    }
+  });
+
+  it('detaches caller cancellation after the request completes', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response('{"status":"ready"}'));
+    vi.stubGlobal('fetch', fetchMock);
+    const controller = new AbortController();
+    await expect(getReadiness(controller.signal)).resolves.toBe('ready');
+    controller.abort();
+    expect(fetchMock.mock.calls[0]?.[1]?.signal?.aborted).toBe(false);
+  });
 });
