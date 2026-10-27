@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Badge, Button } from '@radix-ui/themes';
-import { getReadiness } from '../api/readiness';
+import { readinessQueryOptions } from '../api/readiness-query';
 import styles from './App.module.css';
 
 type Connection = 'checking' | 'ready' | 'not_ready' | 'error';
@@ -28,30 +28,21 @@ const connectionCopy: Record<Connection, { title: string; detail: string }> = {
 };
 
 export function App() {
-  const [connection, setConnection] = useState<Connection>('checking');
-  const [attempt, setAttempt] = useState(0);
+  const queryClient = useQueryClient();
+  const readiness = useQuery(readinessQueryOptions);
+  const connection: Connection = readiness.isFetching
+    ? 'checking'
+    : readiness.isError
+      ? 'error'
+      : (readiness.data ?? 'checking');
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => {
-      controller.abort();
-      setConnection('error');
-    }, 10_000);
-
-    void getReadiness(controller.signal)
-      .then((status) => {
-        if (!controller.signal.aborted) setConnection(status);
-      })
-      .catch(() => {
-        if (!controller.signal.aborted) setConnection('error');
-      })
-      .finally(() => window.clearTimeout(timeout));
-
-    return () => {
-      controller.abort();
-      window.clearTimeout(timeout);
-    };
-  }, [attempt]);
+  async function checkAgain() {
+    await queryClient.cancelQueries({
+      queryKey: readinessQueryOptions.queryKey,
+      exact: true,
+    });
+    await readiness.refetch();
+  }
 
   const copy = connectionCopy[connection];
 
@@ -146,10 +137,7 @@ export function App() {
               size="3"
               variant="outline"
               className={styles.retry}
-              onClick={() => {
-                setConnection('checking');
-                setAttempt((value) => value + 1);
-              }}
+              onClick={checkAgain}
             >
               Проверить снова
             </Button>
