@@ -28,6 +28,33 @@ it('scopes private keys to the authenticated user, wallet and network', () => {
     draftKeys.detail({ ...user, id: 'another' }, draft.id),
   );
 });
+it('accepts API Unicode code-point bounds for names and recipient text', async () => {
+  const name = '😀'.repeat(120);
+  const response = {
+    ...draft,
+    name,
+    recipients: [
+      {
+        address: '😀'.repeat(128),
+        amount: '😀'.repeat(128),
+        comment: '😀'.repeat(500),
+      },
+    ],
+  };
+  vi.stubGlobal(
+    'fetch',
+    vi
+      .fn()
+      .mockResolvedValueOnce(Response.json({ items: [response] }))
+      .mockResolvedValueOnce(Response.json(response)),
+  );
+  await expect(
+    draftsApi.list(new AbortController().signal),
+  ).resolves.toMatchObject({ items: [{ name }] });
+  await expect(
+    draftsApi.get(draft.id, new AbortController().signal),
+  ).resolves.toMatchObject({ name, recipients: response.recipients });
+});
 it('preserves exact amount strings and rejects numeric server amounts', async () => {
   const fetcher = vi.fn().mockResolvedValue(Response.json(draft));
   vi.stubGlobal('fetch', fetcher);
