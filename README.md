@@ -49,7 +49,7 @@ npm run build
 npm run preview
 ```
 
-Build output is `dist/`. Preview listens at **http://127.0.0.1:4173** and is for inspecting static output locally, not production hosting. **The dev API proxy is not part of `dist/` or the preview server.** Production hosting must route `/api/*` to the backend on the same origin, without rewriting those requests to `index.html`. No deployment is configured yet.
+Build output is `dist/`. Preview listens at **http://127.0.0.1:4173** and is for inspecting static output locally, not production hosting. **Vite preview inherits the configured local API proxy; `dist/` contains no proxy.** A working API connection in preview does not validate production routing. Production hosting must route `/api/*` to the backend on the same origin, without rewriting those requests to `index.html`. No deployment is configured yet.
 
 ## Project structure and workflow
 

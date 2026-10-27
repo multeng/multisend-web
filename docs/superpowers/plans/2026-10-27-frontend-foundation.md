@@ -41,33 +41,33 @@
 
 **Interfaces:** Produce `getReadiness(signal: AbortSignal): Promise<'ready' | 'not_ready'>`. Request `/api/readyz`, `cache: 'no-store'`; only accept HTTP 200/status ready or HTTP 503/status not_ready. Throw on all other HTTP/body/network outcomes. Caller owns cancellation and timeout.
 
-- [ ] Add package/configuration/ignore files and install exact compatible versions. Expected: dependency resolution succeeds and lockfile is created.
-- [ ] Write HTTP tests for ready, not_ready, unexpected HTTP, invalid JSON/body/status, network failure and signal forwarding.
-- [ ] Run `npm.cmd test -- src/api/readiness.test.ts`. Expected: failure because client is absent.
-- [ ] Implement the smallest validating client and rerun. Expected: all client cases pass.
-- [ ] Commit `feature: add frontend tooling and readiness client` with plan/spec.
+- [x] Add package/configuration/ignore files and install exact compatible versions. Expected: dependency resolution succeeds and lockfile is created.
+- [x] Write HTTP tests for ready, not_ready, unexpected HTTP, invalid JSON/body/status, network failure and signal forwarding.
+- [x] Run `npm.cmd test -- src/api/readiness.test.ts`. Expected: failure because client is absent.
+- [x] Implement the smallest validating client and rerun. Expected: all client cases pass.
+- [x] Commit `feature: add frontend tooling and readiness client` with plan/spec.
 
 ## Task 2: Responsive application
 
 **Interfaces:** Consume `getReadiness(signal)`; UI states checking/ready/not_ready/error. Abort previous request on retry/unmount, ignore stale results, timeout after 10 seconds, retain retry button keyboard access. No data persistence.
 
-- [ ] Write component tests for checking, each settled state, retry recovery, stale completion, unmount cancellation and timeout.
-- [ ] Run `npm.cmd test -- src/app/App.test.tsx`. Expected: failure because App is absent.
-- [ ] Implement page, theme and responsive CSS. Expected: component tests pass.
-- [ ] Run `npm.cmd run check` (lint, formatting, typecheck, tests, build). Expected: all pass.
-- [ ] Commit `feature: add responsive application shell`.
+- [x] Write component tests for checking, each settled state, retry recovery, stale completion, unmount cancellation and timeout.
+- [x] Run `npm.cmd test -- src/app/App.test.tsx`. Expected: failure because App is absent.
+- [x] Implement page, theme and responsive CSS. Expected: component tests pass.
+- [x] Run `npm.cmd run check` (lint, formatting, typecheck, tests, build). Expected: all pass.
+- [x] Commit `feature: add responsive application shell`.
 
 ## Task 3: Contributor workflow and validation
 
 **Interfaces:** README/AGENTS/CI all invoke the same package scripts. CI uses Node from `.nvmrc`, npm ci and `npm run check` without backend access. Only read permissions.
 
-- [ ] Write contributor docs, environment example, PR template and GitHub Actions workflow; pin official action commit SHAs verified from official repositories.
-- [ ] Run `npm.cmd ci`, `npm.cmd run check`, `npm.cmd audit`; inspect actual results.
-- [ ] Start Vite, verify HTTP and Edge browser layouts at four widths, keyboard focus and API-down/retry behavior. Keep QA artifacts outside tracked source.
-- [ ] Update root roadmap: frontend locally checked, backend and remote CI pending; preserve remaining stages.
-- [ ] Commit `chore: add contributor workflow and CI`.
-- [ ] Obtain one fresh read-only whole-branch review against `master`; fix important findings with regression tests and rerun checks.
-- [ ] Leave branch in place for user PR/merge and report actual checks and limitations.
+- [x] Write contributor docs, environment example, PR template and GitHub Actions workflow; pin official action commit SHAs verified from official repositories.
+- [x] Run `npm.cmd ci`, `npm.cmd run check`, `npm.cmd audit`; inspect actual results.
+- [x] Start Vite, verify HTTP and Edge browser layouts at four widths, keyboard focus and API-down/retry behavior. Keep QA artifacts outside tracked source.
+- [x] Update root roadmap: frontend locally checked, backend and remote CI pending; preserve remaining stages.
+- [x] Commit `chore: add contributor workflow and CI`.
+- [x] Obtain one fresh read-only whole-branch review against `master`; fix important findings with regression tests and rerun checks.
+- [x] Leave branch in place for user PR/merge and report actual checks and limitations.
 
 ## Plan self-review
 
