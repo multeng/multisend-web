@@ -1,0 +1,155 @@
+.editor {
+  min-width: 0;
+}
+.toolbar,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.toolbar button,
+.actions button,
+.editor > button,
+.dialog button {
+  min-height: 44px;
+}
+.rows {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: grid;
+  gap: 1rem;
+}
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(9rem, 12rem) auto;
+  gap: 0.75rem 1rem;
+  padding: 1rem;
+  border: 1px solid var(--gray-6);
+  background: var(--color-panel-solid);
+  border-radius: 1rem;
+}
+.row label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+.row input {
+  min-height: 44px;
+}
+.address {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.rowLabel {
+  font-weight: 600;
+}
+.address code,
+.preview code,
+.importPreview code {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.address span:last-child,
+.preview p {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.issues {
+  grid-column: 1 / -1;
+  font-size: 0.85rem;
+}
+.issues p {
+  margin: 0.25rem 0;
+}
+.error {
+  color: var(--red-11);
+}
+.warning {
+  color: var(--amber-11);
+}
+.muted {
+  color: var(--gray-11);
+  font-size: 0.85rem;
+}
+.summary,
+.preview,
+.importPreview {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--blue-2);
+  margin: 1rem 0;
+}
+.summary p {
+  overflow-wrap: anywhere;
+}
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  min-height: 44px;
+}
+.check input {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+}
+.dialog {
+  max-width: 42rem;
+}
+.form {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  min-width: 0;
+}
+.form input,
+.form textarea,
+.form select {
+  font: inherit;
+  min-width: 0;
+  max-width: 100%;
+}
+.form select {
+  min-height: 44px;
+  padding: 0.5rem;
+}
+.form code {
+  overflow-wrap: anywhere;
+}
+.close {
+  margin-top: 1rem;
+}
+.empty {
+  padding: 1rem 0;
+}
+.preview ol {
+  padding-left: 1.25rem;
+}
+.preview li {
+  padding: 0.75rem 0;
+}
+.importPreview li {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .actions {
+    justify-content: space-between;
+  }
+  .toolbar {
+    align-items: stretch;
+  }
+  .toolbar button {
+    flex: 1 1 10rem;
+  }
+  .summary button {
+    width: 100%;
+    min-height: 44px;
+  }
+}
