@@ -150,3 +150,68 @@ it('revokes authentication and clears data on account or network change', async 
   await vi.waitFor(() => expect(api.logout).toHaveBeenCalledTimes(2));
   controller.stop();
 });
+
+// The real UI SDK refreshes the active QR connection when these parameters
+// change. Once a wallet connects, that refresh throws WalletAlreadyConnectedError.
+function rejectConnectedParameterChanges(connector: Connector) {
+  vi.mocked(connector.setConnectRequestParameters).mockImplementation(() => {
+    if (connector.wallet) throw new Error('WalletAlreadyConnectedError');
+  });
+}
+
+it('completes server authentication without restarting the connected wallet', async () => {
+  const { controller, connector, emit } = setup();
+  rejectConnectedParameterChanges(connector);
+  await controller.start();
+  await controller.login();
+  emit(wallet);
+  await vi.waitFor(() => {
+    expect(controller.getSnapshot().session?.authenticated).toBe(true);
+    expect(controller.getSnapshot().phase).toBe('idle');
+  });
+  expect(connector.setConnectRequestParameters).toHaveBeenCalledTimes(1);
+  controller.stop();
+});
+
+it.each([
+  ['mainnet', { ...wallet, account: { ...wallet.account, chain: '-239' } }],
+  ['missing proof', { ...wallet, connectItems: undefined }],
+] as const)(
+  'shows an actionable error for %s without restarting the connection',
+  async (_, connected) => {
+    const { controller, connector, emit, api } = setup();
+    rejectConnectedParameterChanges(connector);
+    await controller.start();
+    await controller.login();
+    emit(connected);
+    await vi.waitFor(() => {
+      expect(controller.getSnapshot().phase).toBe('error');
+      expect(controller.getSnapshot().error).toContain('testnet');
+    });
+    expect(api.verify).not.toHaveBeenCalled();
+    controller.stop();
+  },
+);
+
+it('shows a server verification error and can retry with a fresh challenge', async () => {
+  const { controller, connector, emit, api } = setup();
+  rejectConnectedParameterChanges(connector);
+  vi.mocked(connector.disconnect).mockImplementation(async () => {
+    emit(null);
+  });
+  vi.mocked(api.verify).mockRejectedValueOnce(new Error('Proof rejected'));
+  await controller.start();
+  await controller.login();
+  emit(wallet);
+  await vi.waitFor(() => {
+    expect(controller.getSnapshot().phase).toBe('error');
+    expect(controller.getSnapshot().error).toContain('сервером');
+  });
+  await controller.login();
+  emit(wallet);
+  await vi.waitFor(() =>
+    expect(controller.getSnapshot().session?.authenticated).toBe(true),
+  );
+  expect(api.challenge).toHaveBeenCalledTimes(2);
+  controller.stop();
+});
