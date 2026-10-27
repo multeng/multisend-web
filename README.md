@@ -44,6 +44,26 @@ Runs ESLint, Prettier check, strict TypeScript checks, Vitest and a production b
 
 Behavior tests cover readiness validation, errors, retry recovery, late responses, StrictMode cleanup and timeouts. Browser checks at 360, 390, 768 and 1280 px supplement these tests; real phones and wallets require separate validation.
 
+### Server data
+
+TanStack Query manages request state, shared requests and cache lifecycle; native `fetch` handles HTTP. One stable QueryClient wraps the app. Each test gets an isolated client. Automatic query/mutation retries and query focus/reconnect refetches are disabled by default; future read-only queries can opt in deliberately.
+
+Readiness uses `['api', 'readiness']`, `staleTime: 0`, `gcTime: 0` and `networkMode: 'always'`: concurrent observers share a request, inactive results are discarded, and an offline browser still reaches the client's error/deadline handling. Manual retry cancels an existing request before starting another. The HTTP client forwards Query's cancellation signal and enforces the 10-second deadline through response-body parsing. Cancellation does not undo a server operation or blockchain transaction.
+
+No cache persistence or offline mutation replay is configured. Future private caches must be scoped by authenticated user, wallet and network, and cleared when the session changes. Local recipient editing will remain separate from server data.
+
+### Before committing
+
+`npm ci` installs the Husky hook in this checkout through `prepare`. Commit-time checks run:
+
+1. ESLint and Prettier checks on staged supported files using lint-staged.
+2. Whole-project TypeScript checks.
+3. All unit tests.
+
+The hook does not auto-format or fix files. Run `npm run format` explicitly when needed. You can run `npm run precommit` to exercise the same pipeline; the staged-file part needs files in Git's index. lint-staged preserves partially staged changes using its normal backup/hide mechanism; typecheck and tests run against the working tree, not an isolated staged snapshot.
+
+Hooks use Git's POSIX shell, including Git for Windows; Node/npm must be available to Git or your IDE. Install dev dependencies to use the hook. Generated `.husky/_/` files are ignored; `.husky/pre-commit` is tracked. CI sets `HUSKY=0` during installation and runs the full `npm run check` directly. Local hooks can be bypassed, so required CI checks in branch rules remain the enforcement mechanism. Stop Vite before a clean `npm ci` on Windows to avoid locked native dependency files.
+
 ```sh
 npm run build
 npm run preview
@@ -64,5 +84,7 @@ React + TypeScript + Vite, Radix Themes and CSS Modules; system fonts and no Tai
 Use separate branches such as `feature/add-base-structure`, `fix/readiness-timeout`, `chore/update-dependencies` and `docs/update-readme`. Work in the existing checkout without git worktree. Keep changes reviewable, run the checks and open a PR to the repository's default branch. The user handles PR creation and merge in this workflow.
 
 Dependencies are pinned and `package-lock.json` is committed. Use `npm ci` for clean installs. Review dependency updates and audit results; do not run automatic breaking upgrades. Do not commit `.env.local`, recipient lists, credentials, wallet keys, build output or QA artifacts. A public repository does not imply a chosen open-source license; choose licensing before public distribution/pilot.
+
+Dependency candidates are intentionally deferred until used: Zod for runtime schemas when API/form contracts exist; React Hook Form for recipient forms; Papa Parse for CSV import; TON Connect SDK for wallet flows; Playwright for browser/wallet journeys. Query's ESLint plugin is already enabled. Axios, a global state manager, commitlint and Query Devtools have no current requirement and are not installed.
 
 GitHub Actions runs the same checks for pushes and PRs with read-only permissions and no private backend access. A locally passing check is separate from a successful remote Actions run; the latter can only be reported after an actual push and run.
