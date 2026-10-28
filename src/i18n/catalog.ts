@@ -243,15 +243,33 @@ export const english = {
     'Could not get a plan. Check your wallet connection and try again.',
   'План частей по данным кошелька': 'Part plan based on wallet capabilities',
   'Комиссия сервиса: 0 TON': 'Service fee: 0 TON',
-  'Баланс и сетевые расходы ещё не проверены. Этот отчёт не разрешает отправку средств.':
-    'Balance and network costs have not been checked. This report does not authorize sending funds.',
+  'Сетевые расходы ещё не рассчитаны. Этот отчёт не разрешает отправку средств.':
+    'Network costs have not been estimated. This report does not authorize sending funds.',
   'Частей / отдельных запросов подписи: {0}':
     'Parts / separate signature requests: {0}',
   'Строки {0}–{1}: {2} TON': 'Rows {0}–{1}: {2} TON',
   'Сервер отклонил список. Исправьте адреса, суммы и ограничения перед новой проверкой.':
     'The server rejected the list. Check addresses, amounts and limits before trying again.',
-  'Комиссия сервиса в testnet — 0 TON. Сетевые расходы и баланс ещё не проверены. Отправка средств недоступна.':
-    'The testnet service fee is 0 TON. Network costs and balance have not been checked. Sending funds is unavailable.',
+  'Комиссия сервиса в testnet — 0 TON. Баланс можно проверить после входа; сетевые расходы ещё не рассчитаны. Отправка средств недоступна.':
+    'The testnet service fee is 0 TON. Check your balance after signing in; network costs have not been estimated. Sending funds is unavailable.',
+  'Баланс кошелька': 'Wallet balance',
+  'Проверяем баланс…': 'Checking balance…',
+  'Проверить баланс': 'Check balance',
+  'Не удалось проверить баланс. Повторите проверку позднее.':
+    'Could not check the balance. Try again later.',
+  'Сетевые расходы не учтены. Достаточность средств для отправки ещё не проверена.':
+    'Network costs are excluded. Sufficient funds for sending have not been verified.',
+  'Проверка баланса устарела. Проверьте заново.':
+    'The balance check has expired. Check again.',
+  'Баланс TON:': 'TON balance:',
+  'Состояние кошелька: {0}': 'Wallet state: {0}',
+  'Состояние кошелька не ACTIVE. Возможность отправки не подтверждена.':
+    'The wallet state is not ACTIVE. Sending availability is unverified.',
+  'Не хватает для суммы получателям:': 'Shortfall for recipient amounts:',
+  'Сумма получателям покрывается балансом, без учёта сетевых расходов.':
+    'The balance covers recipient amounts, excluding network costs.',
+  'Проверено на блоке {0}. Снимок действует не более 30 секунд.':
+    'Checked at block {0}. The snapshot is valid for at most 30 seconds.',
 } as const;
 
 export type MessageKey = keyof typeof english;

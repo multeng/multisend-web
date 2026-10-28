@@ -1,7 +1,7 @@
 openapi: 3.1.1
 info:
   title: TON Multisend API
-  version: 0.4.0
+  version: 0.5.0
   description:
     Testnet health, wallet authentication, private unfinished drafts and stateless payout
     preparation reports. No payout execution.
@@ -371,6 +371,71 @@ paths:
                 $ref: '#/components/schemas/APIError'
         '503':
           description: Session service unavailable.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+  /api/payouts/balance:
+    get:
+      operationId: readPayoutBalance
+      summary: Read authenticated testnet wallet native balance
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description:
+            Fresh proof-verified snapshot for authenticated account; no caller address or recipient
+            list.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceReport'
+        '400':
+          description: Query parameters and request bodies are not accepted.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Authentication required or revoked.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '405':
+          description: Only GET is allowed.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '429':
+          description: Rate limit exceeded.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description:
+            Verified balance unavailable, stale, invalid or initialization incomplete. No synthetic
+            zero balance.
           headers:
             Cache-Control:
               $ref: '#/components/headers/NoStore'
@@ -815,6 +880,71 @@ components:
         networkFeeStatus:
           type: string
           const: not_estimated
+    BalanceReport:
+      type: object
+      additionalProperties: false
+      required:
+        - address
+        - network
+        - balanceNano
+        - accountStatus
+        - blockSeqno
+        - blockRootHash
+        - blockTime
+        - checkedAt
+        - expiresAt
+        - executable
+        - networkFeeStatus
+      description:
+        Proof-verified testnet native balance. Unix-second timestamps, expires within 30
+        seconds of block time and check time. Not a fee estimate, balance reservation, spendability
+        assertion or authorization to send.
+      properties:
+        address:
+          type: string
+          maxLength: 128
+        network:
+          type: string
+          enum:
+            - '-3'
+        balanceNano:
+          type: string
+          pattern: ^(0|[1-9][0-9]*)$
+          maxLength: 37
+        accountStatus:
+          type: string
+          enum:
+            - ACTIVE
+            - UNINIT
+            - FROZEN
+            - NON_EXIST
+        blockSeqno:
+          type: integer
+          minimum: 1
+          maximum: 4294967295
+        blockRootHash:
+          type: string
+          pattern: ^[0-9a-f]{64}$
+        blockTime:
+          type: integer
+          minimum: 1
+          maximum: 4294967295
+        checkedAt:
+          type: integer
+          minimum: 1
+          maximum: 4294967295
+        expiresAt:
+          type: integer
+          minimum: 1
+          maximum: 4294967295
+        executable:
+          type: boolean
+          enum:
+            - false
+        networkFeeStatus:
+          type: string
+          enum:
+            - not_estimated
   securitySchemes:
     sessionCookie:
       type: apiKey

@@ -149,6 +149,23 @@ export type PreparationReport = {
   networkFeeStatus: 'not_estimated';
 };
 
+/**
+ * Proof-verified testnet native balance. Unix-second timestamps, expires within 30 seconds of block time and check time. Not a fee estimate, balance reservation, spendability assertion or authorization to send.
+ */
+export type BalanceReport = {
+  address: string;
+  network: '-3';
+  balanceNano: string;
+  accountStatus: 'ACTIVE' | 'UNINIT' | 'FROZEN' | 'NON_EXIST';
+  blockSeqno: number;
+  blockRootHash: string;
+  blockTime: number;
+  checkedAt: number;
+  expiresAt: number;
+  executable: false;
+  networkFeeStatus: 'not_estimated';
+};
+
 export type CheckHealthData = {
   body?: never;
   path?: never;
@@ -550,3 +567,46 @@ export type PreparePayoutResponses = {
 
 export type PreparePayoutResponse =
   PreparePayoutResponses[keyof PreparePayoutResponses];
+
+export type ReadPayoutBalanceData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/api/payouts/balance';
+};
+
+export type ReadPayoutBalanceErrors = {
+  /**
+   * Query parameters and request bodies are not accepted.
+   */
+  400: ApiError;
+  /**
+   * Authentication required or revoked.
+   */
+  401: ApiError;
+  /**
+   * Only GET is allowed.
+   */
+  405: ApiError;
+  /**
+   * Rate limit exceeded.
+   */
+  429: ApiError;
+  /**
+   * Verified balance unavailable, stale, invalid or initialization incomplete. No synthetic zero balance.
+   */
+  503: ApiError;
+};
+
+export type ReadPayoutBalanceError =
+  ReadPayoutBalanceErrors[keyof ReadPayoutBalanceErrors];
+
+export type ReadPayoutBalanceResponses = {
+  /**
+   * Fresh proof-verified snapshot for authenticated account; no caller address or recipient list.
+   */
+  200: BalanceReport;
+};
+
+export type ReadPayoutBalanceResponse =
+  ReadPayoutBalanceResponses[keyof ReadPayoutBalanceResponses];
