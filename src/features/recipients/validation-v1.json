@@ -1,0 +1,5931 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "name": "empty",
+      "recipients": [],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 1,
+        "rows": []
+      }
+    },
+    {
+      "name": "amount 0.000000001",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "0.000000001",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "amount 9007199254740993.000000001",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "9007199254740993.000000001",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "9007199254740993000000001",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "amount 1.230000000",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1.230000000",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1230000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "amount 0.1",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "0.1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "100000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "amount 1329227995784915872.903807060",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1329227995784915872.903807060",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1329227995784915872903807060",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"0\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "0",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"-1\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "-1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"+1\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "+1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"1e3\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1e3",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"1,2\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1,2",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \" 1\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": " 1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"1 \"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1 ",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"1\\n\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1\n",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"1.\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1.",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \".1\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": ".1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"01\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "01",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"0.0000000001\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "0.0000000001",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"１\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "１",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid amount \"1329227995784915872903807060.280344576\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1329227995784915872903807060.280344576",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "largest nanotons",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1329227995784915872903807060.280344575",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1329227995784915872903807060280344575",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "exact overflow",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1329227995784915872903807060.280344576",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "0",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "aggregate overflow",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1329227995784915872903807060.280344575",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "0.000000001",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "1329227995784915872903807060280344576",
+        "errors": 1,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "canonical duplicates",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "0.1",
+          "comment": ""
+        },
+        {
+          "address": "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c",
+          "amount": "0.2",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "300000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "unicode comment boundary",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "unicode comment too long",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address UQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoYhn",
+      "recipients": [
+        {
+          "address": "UQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoYhn",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address UQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoYhn",
+      "recipients": [
+        {
+          "address": "UQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoYhn",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address 0:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+      "recipients": [
+        {
+          "address": "0:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address EQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhodWi",
+      "recipients": [
+        {
+          "address": "EQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhodWi",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address EQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhodWi",
+      "recipients": [
+        {
+          "address": "EQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhodWi",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address 0:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+      "recipients": [
+        {
+          "address": "0:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address 0QChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoTPt",
+      "recipients": [
+        {
+          "address": "0QChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoTPt",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "address 0QChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoTPt",
+      "recipients": [
+        {
+          "address": "0QChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoTPt",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "address 0:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+      "recipients": [
+        {
+          "address": "0:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address kQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoW4o",
+      "recipients": [
+        {
+          "address": "kQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoW4o",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "address kQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoW4o",
+      "recipients": [
+        {
+          "address": "kQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoW4o",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "address 0:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+      "recipients": [
+        {
+          "address": "0:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address Uf-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoXcv",
+      "recipients": [
+        {
+          "address": "Uf-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoXcv",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address Uf+hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoXcv",
+      "recipients": [
+        {
+          "address": "Uf+hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoXcv",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address -1:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+      "recipients": [
+        {
+          "address": "-1:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address Ef-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoSrq",
+      "recipients": [
+        {
+          "address": "Ef-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoSrq",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address Ef+hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoSrq",
+      "recipients": [
+        {
+          "address": "Ef+hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoSrq",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address -1:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+      "recipients": [
+        {
+          "address": "-1:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address 0f-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhocyl",
+      "recipients": [
+        {
+          "address": "0f-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhocyl",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "address 0f+hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhocyl",
+      "recipients": [
+        {
+          "address": "0f+hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhocyl",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "address -1:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+      "recipients": [
+        {
+          "address": "-1:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "address kf-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoZFg",
+      "recipients": [
+        {
+          "address": "kf-hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoZFg",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "address kf+hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoZFg",
+      "recipients": [
+        {
+          "address": "kf+hoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoZFg",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "address -1:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+      "recipients": [
+        {
+          "address": "-1:A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "-1:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid address \"\"",
+      "recipients": [
+        {
+          "address": "",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": null,
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid address \"EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9d\"",
+      "recipients": [
+        {
+          "address": "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9d",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": null,
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid address \"1:0000000000000000000000000000000000000000000000000000000000000000\"",
+      "recipients": [
+        {
+          "address": "1:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": null,
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid address \"0:0000000000000000000000000000000000000000000000000000000000000000 \"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000 ",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": null,
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid address \"0:0000000000000000000000000000000000000000000000000000000000000000\\n\"",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000\n",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": null,
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid address \"0:zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\"",
+      "recipients": [
+        {
+          "address": "0:zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": null,
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "invalid address \"EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"",
+      "recipients": [
+        {
+          "address": "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": null,
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "unsupported flag/workchain MQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGmu",
+      "recipients": [
+        {
+          "address": "MQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGmu",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": null,
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "unsupported flag/workchain EQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEKA",
+      "recipients": [
+        {
+          "address": "EQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEKA",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": null,
+            "duplicate": false,
+            "errors": 1,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "duplicates across bounce and test flags",
+      "recipients": [
+        {
+          "address": "UQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoYhn",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "EQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhodWi",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0QChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoTPt",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "kQChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoW4o",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "4000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 0
+          },
+          {
+            "canonical": "0:a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "mixed base64 alphabet",
+      "recipients": [
+        {
+          "address": "kQD_//////////////////////////////////////////Bi",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "1000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "duplicate": false,
+            "errors": 0,
+            "warnings": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "recipient limit 200",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": true,
+        "totalNano": "200000000000",
+        "errors": 0,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "recipient limit 201",
+      "recipients": [
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        },
+        {
+          "address": "0:0000000000000000000000000000000000000000000000000000000000000000",
+          "amount": "1",
+          "comment": ""
+        }
+      ],
+      "expected": {
+        "valid": false,
+        "totalNano": "201000000000",
+        "errors": 1,
+        "rows": [
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          },
+          {
+            "canonical": "0:0000000000000000000000000000000000000000000000000000000000000000",
+            "duplicate": true,
+            "errors": 0,
+            "warnings": 1
+          }
+        ]
+      }
+    }
+  ]
+}
