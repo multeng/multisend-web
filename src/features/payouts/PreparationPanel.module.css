@@ -1,0 +1,12 @@
+.panel {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.panel button {
+  max-width: 100%;
+  min-height: 44px;
+  height: auto;
+  padding-block: 10px;
+  white-space: normal;
+}

@@ -2,6 +2,7 @@ import type { AuthSession, TonProof } from '../../api/generated';
 import { authApi, type AuthApi } from './api';
 
 export type ConnectedWallet = {
+  device?: { features: readonly unknown[] };
   account: {
     address: string;
     chain: string;
@@ -22,14 +23,50 @@ export type Connector = {
   ): void;
   openModal(): Promise<void>;
 };
+export type WalletPlanningContext = {
+  address: string;
+  network: string;
+  maxMessages: number | null;
+};
+function planningContext(
+  wallet: ConnectedWallet | null,
+): WalletPlanningContext | null {
+  if (!wallet) return null;
+  const features =
+    wallet.device?.features.filter(
+      (f): f is { name: string; maxMessages?: unknown } =>
+        typeof f === 'object' &&
+        f !== null &&
+        'name' in f &&
+        f.name === 'SendTransaction',
+    ) ?? [];
+  const limit = features.length === 1 ? features[0]?.maxMessages : null;
+  return {
+    address: wallet.account.address.toLowerCase(),
+    network: wallet.account.chain,
+    maxMessages:
+      typeof limit === 'number' &&
+      Number.isInteger(limit) &&
+      limit >= 1 &&
+      limit <= 255
+        ? limit
+        : null,
+  };
+}
 type State = {
+  wallet: WalletPlanningContext | null;
   session: AuthSession | null;
   phase: 'loading' | 'idle' | 'preparing' | 'waiting' | 'verifying' | 'error';
   error: string | null;
 };
 
 export class AuthController {
-  private state: State = { session: null, phase: 'loading', error: null };
+  private state: State = {
+    session: null,
+    phase: 'loading',
+    error: null,
+    wallet: null,
+  };
   private listeners = new Set<() => void>();
   private generation = 0;
   private request = new AbortController();
@@ -61,11 +98,16 @@ export class AuthController {
     const generation = this.next();
     this.update({ session: null, phase: 'loading' });
     this.unsubscribe = this.connector?.onStatusChange((wallet) => {
+      this.update({ wallet: planningContext(wallet) });
       void this.walletChanged(wallet);
     });
     try {
       const session = await this.api.session(this.request.signal);
       if (this.connector) await this.connector.connectionRestored;
+      if (generation === this.generation)
+        this.update({
+          wallet: planningContext(this.connector?.wallet ?? null),
+        });
       if (generation !== this.generation) return;
       if (
         session.authenticated &&

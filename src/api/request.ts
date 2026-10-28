@@ -31,6 +31,8 @@ const errorBody = z.object({
       'not_found',
       'conflict',
       'quota_exceeded',
+      'wallet_mismatch',
+      'method_not_allowed',
     ]),
   }),
 });

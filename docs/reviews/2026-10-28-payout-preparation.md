@@ -1,0 +1,17 @@
+# Testnet preparation report verification — 2026-10-28
+
+Implemented on feature/add-payout-preparation from backend df74f7a and frontend096a082. Protected POST /api/payouts/prepare invokes Go validation, matches the authenticated sender/network, and returns exact ordered parts based on the connected wallet's advertised limit. The report is stateless and explicitly non-executable: balances and network expenses are not checked. No transfers, chain requests, migrations, new dependencies, cloud changes or deployment.
+
+Go tests: RED for missing Prepare, then GREEN for exact200-row splits at1/4/255, invalid input, duplicates and large decimal amounts. Real PostgreSQL session HTTP tests: route404 RED, then GREEN after authenticated routing; cover200/400/401/403/409/413/415, unknown/missing/null fields, forged owner, body limits, mismatched sender/network and retained pre-logout cookie rejection after a process restart. The local PostgreSQL was restarted on its original loopback55432 port after moving the workspace; credentials were neither changed nor logged.
+
+Frontend tests: RED missing capability state/API/UI, then GREEN. Exact SDK feature extraction, same-account capability changes, no guessed legacy limit, explicit upload, cancellation, stale response/input/capability invalidation, safe unavailable labels, response consistency and405 error preservation. API schema checks against generated OpenAPI0.4.0 DTOs, including exact totals and part order.
+
+Fresh whole-branch review found no Critical/Important issue and one Minor: method_not_allowed missing from the contract/runtime enum. Fixed with observed RED/GREEN test and regenerated both public snapshots/DTOs. Reviewer could not independently execute tests due sandbox permissions; reported test results here are the implementer's separate evidence. Cookie-replay strengthening, privacy-copy clarification and mobile CSS were subsequent changes verified by tests/browser QA, not a second review.
+
+Edge isolated harness: synthetic authenticated context and synthetic HTTP response, RU/EN at320/360/390/768/1280px, exact amount above JS safe integer, explicit-only upload, capability reset and0 runtime exceptions. Screenshots inspected. This is not real-wallet proof or an end-to-end financial test.
+
+CSRF is excluded from the identity/input-scoped Query key through one documented targeted Query ESLint exception; it remains a request header. Tokens must not be stored in cache keys. Logout clears private queries; per-preview cache gcTime0, retries/refetch disabled. Anonymous local previews remain local; new button explicitly discloses recipient upload.
+
+Full checks passed: frontend npm run check,186 tests across20 files; backend scripts/check.ps1 -Integration -Vuln including retained-cookie replay. Contract copies SHA25685909C9505E98737E33E14E7D5F9AFDC00692DA13D74EBFC90C230C379D6BEA6. Actual anonymous production-build browser regression also passed: no prepare upload, translated sign-in notice, RU/EN10viewport cases, exact input/dialog state, CSV errors and saved language;0 runtime exceptions. Existing Vite wallet chunk-size warning remains. Go scan has0 affected called symbols/imported packages, with the known module-only advisory for unused x/crypto/openpgp. Remote CI, real-device signing and Windows race testing not claimed.
+
+Next block: verified testnet chain balances, recipient/account state, serialized payload/network expense estimate and stale-estimate rules; then immutable server packages/attempts before any wallet send.

@@ -157,8 +157,8 @@ export const english = {
   'Попробовать на примере': 'Try an example',
   'Демонстрация: синтетические адреса, средства не отправляются. Замените их своими получателями.':
     'Demo: synthetic addresses, no funds are sent. Replace them with your own recipients.',
-  'Для сохранения на сервере войдите кошельком. До явного сохранения получатели на сервер не отправляются.':
-    'Sign in with your wallet to save on the server. Recipients are not uploaded until you explicitly save.',
+  'Для сохранения и серверной проверки войдите кошельком. До входа список проверяется локально.':
+    'Sign in with your wallet to save or validate on the server. Before signing in, your list is checked locally.',
   'Заменить список примером?': 'Replace the list with an example?',
   'Текущие строки будут заменены. Можно закрыть окно и сначала экспортировать CSV.':
     'The current rows will be replaced. You can close this dialog and export CSV first.',
@@ -227,6 +227,31 @@ export const english = {
   'Язык интерфейса': 'Interface language',
   'TON Multisend — удобная подготовка массовых выплат в TON. Приложение в разработке, начиная с testnet.':
     'TON Multisend — convenient bulk TON payment preparation. In development, starting on testnet.',
+  'Войдите через кошелёк для серверной проверки и плана частей.':
+    'Sign in with your wallet for server validation and a part plan.',
+  'Подключите тот же testnet-кошелёк с известным лимитом сообщений для плана частей.':
+    'Connect the same testnet wallet with a known message limit to plan parts.',
+  'Серверная подготовка': 'Server preparation',
+  'Список отправляется на сервер только по этой кнопке. Переводы не выполняются.':
+    'Your list is sent to the server only when you press this button. No transfers are made.',
+  'Проверяем на сервере…': 'Validating on the server…',
+  'Проверить на сервере и рассчитать части':
+    'Validate on server and plan parts',
+  'Список превышает лимит серверной проверки 64 КиБ. Уменьшите его размер.':
+    'The list exceeds the 64 KiB server validation limit. Reduce its size.',
+  'Не удалось получить план. Проверьте подключение кошелька и повторите проверку.':
+    'Could not get a plan. Check your wallet connection and try again.',
+  'План частей по данным кошелька': 'Part plan based on wallet capabilities',
+  'Комиссия сервиса: 0 TON': 'Service fee: 0 TON',
+  'Баланс и сетевые расходы ещё не проверены. Этот отчёт не разрешает отправку средств.':
+    'Balance and network costs have not been checked. This report does not authorize sending funds.',
+  'Частей / отдельных запросов подписи: {0}':
+    'Parts / separate signature requests: {0}',
+  'Строки {0}–{1}: {2} TON': 'Rows {0}–{1}: {2} TON',
+  'Сервер отклонил список. Исправьте адреса, суммы и ограничения перед новой проверкой.':
+    'The server rejected the list. Check addresses, amounts and limits before trying again.',
+  'Комиссия сервиса в testnet — 0 TON. Сетевые расходы и баланс ещё не проверены. Отправка средств недоступна.':
+    'The testnet service fee is 0 TON. Network costs and balance have not been checked. Sending funds is unavailable.',
 } as const;
 
 export type MessageKey = keyof typeof english;
