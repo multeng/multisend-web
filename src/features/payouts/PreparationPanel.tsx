@@ -12,6 +12,7 @@ import { AuthContext } from '../auth/context';
 import type { AuthController } from '../auth/controller';
 import { formatAmount, validateRecipients } from '../recipients/validation';
 import { preparePayout } from './api';
+import { BalancePanel } from './BalancePanel';
 import styles from './PreparationPanel.module.css';
 
 export function PreparationPanel({
@@ -135,13 +136,13 @@ function ReportPanel({
           )}
         </p>
       )}
-      {query.data && (
+      {query.data && !query.isFetching && (
         <div role="status">
           <h4>{t('План частей по данным кошелька')}</h4>
           <p>{t('Комиссия сервиса: 0 TON')}</p>
           <p>
             {t(
-              'Баланс и сетевые расходы ещё не проверены. Этот отчёт не разрешает отправку средств.',
+              'Сетевые расходы ещё не рассчитаны. Этот отчёт не разрешает отправку средств.',
             )}
           </p>
           {query.data.valid ? (
@@ -157,6 +158,13 @@ function ReportPanel({
                   0: query.data.parts.length,
                 })}
               </p>
+              <BalancePanel
+                key={JSON.stringify(input)}
+                user={session.user}
+                controller={controller}
+                totalNano={query.data.totalNano}
+                identity={JSON.stringify(input)}
+              />
               <ol>
                 {query.data.parts.map((part) => (
                   <li key={part.firstRecipient}>

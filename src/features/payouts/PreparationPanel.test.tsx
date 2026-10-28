@@ -68,7 +68,7 @@ it('fetches only on explicit action and labels unchecked fees and balance', asyn
   expect(screen.getByText('Комиссия сервиса: 0 TON')).toBeInTheDocument();
   expect(
     screen.getByText(
-      'Баланс и сетевые расходы ещё не проверены. Этот отчёт не разрешает отправку средств.',
+      'Сетевые расходы ещё не рассчитаны. Этот отчёт не разрешает отправку средств.',
     ),
   ).toBeInTheDocument();
   expect(
