@@ -30,7 +30,9 @@ export type ApiError = {
       | 'internal_error'
       | 'not_found'
       | 'conflict'
-      | 'quota_exceeded';
+      | 'quota_exceeded'
+      | 'wallet_mismatch'
+      | 'method_not_allowed';
   };
 };
 
@@ -110,6 +112,41 @@ export type DraftDetail = DraftMetadata & {
 
 export type DraftList = {
   items: Array<DraftMetadata>;
+};
+
+export type PreparationInput = {
+  address: string;
+  network: '-3';
+  maxMessages: number;
+  recipients: Array<DraftRecipient>;
+};
+
+export type PreparationRow = {
+  canonical: string | null;
+  duplicate: boolean;
+  errors: Array<string>;
+  warnings: Array<string>;
+};
+
+export type PreparationPart = {
+  firstRecipient: number;
+  recipientCount: number;
+  totalNano: string;
+};
+
+export type PreparationReport = {
+  network: '-3';
+  address: string;
+  valid: boolean;
+  totalNano: string;
+  serviceFeeNano: '0';
+  maxMessages: number;
+  rows: Array<PreparationRow>;
+  errors: Array<string>;
+  parts: Array<PreparationPart>;
+  executable: false;
+  balanceStatus: 'not_checked';
+  networkFeeStatus: 'not_estimated';
 };
 
 export type CheckHealthData = {
@@ -451,3 +488,65 @@ export type UpdateDraftResponses = {
 
 export type UpdateDraftResponse =
   UpdateDraftResponses[keyof UpdateDraftResponses];
+
+export type PreparePayoutData = {
+  body: PreparationInput;
+  headers: {
+    Origin: string;
+    'X-CSRF-Token': string;
+  };
+  path?: never;
+  query?: never;
+  url: '/api/payouts/prepare';
+};
+
+export type PreparePayoutErrors = {
+  /**
+   * Malformed input, missing fields or bounds violation.
+   */
+  400: ApiError;
+  /**
+   * Authentication required or revoked.
+   */
+  401: ApiError;
+  /**
+   * Exact Origin and CSRF required.
+   */
+  403: ApiError;
+  /**
+   * Only POST is allowed.
+   */
+  405: ApiError;
+  /**
+   * Wallet sender or network does not match session.
+   */
+  409: ApiError;
+  /**
+   * JSON body exceeds64KiB.
+   */
+  413: ApiError;
+  /**
+   * application/json required.
+   */
+  415: ApiError;
+  /**
+   * Rate limited.
+   */
+  429: ApiError;
+  /**
+   * Session service unavailable.
+   */
+  503: ApiError;
+};
+
+export type PreparePayoutError = PreparePayoutErrors[keyof PreparePayoutErrors];
+
+export type PreparePayoutResponses = {
+  /**
+   * Static report only. Semantic errors return valid=false and no parts. No balances, fee estimate, authorization or stored package.
+   */
+  200: PreparationReport;
+};
+
+export type PreparePayoutResponse =
+  PreparePayoutResponses[keyof PreparePayoutResponses];

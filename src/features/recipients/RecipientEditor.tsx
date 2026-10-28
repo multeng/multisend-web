@@ -8,6 +8,7 @@ import { EditorDialog } from './EditorDialog';
 import { RecipientFields } from './RecipientFields';
 import { formatAmount, validateRecipients } from './validation';
 import styles from './Editor.module.css';
+import { PreparationPanel } from '../payouts/PreparationPanel';
 
 const empty: DraftRecipient = { address: '', amount: '', comment: '' };
 export function RecipientEditor({
@@ -193,6 +194,7 @@ export function RecipientEditor({
           className={styles.preview}
         >
           <h3>{t('Предпросмотр · Testnet')}</h3>
+          <PreparationPanel recipients={value} />
           <p>
             {t('Получателям:')}{' '}
             <strong>{formatAmount(validation.total)} TON</strong>
@@ -208,7 +210,7 @@ export function RecipientEditor({
           </ol>
           <p>
             {t(
-              'Сетевые расходы, комиссия сервиса и число подписей ещё не рассчитаны. Отправка средств недоступна.',
+              'Комиссия сервиса в testnet — 0 TON. Сетевые расходы и баланс ещё не проверены. Отправка средств недоступна.',
             )}
           </p>
           <p>

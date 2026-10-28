@@ -215,3 +215,38 @@ it('shows a server verification error and can retry with a fresh challenge', asy
   expect(api.challenge).toHaveBeenCalledTimes(2);
   controller.stop();
 });
+
+it('exposes current SDK planning capability and updates it for the same account', async () => {
+  const { controller, connector, api, emit } = setup();
+  const connected = {
+    ...wallet,
+    device: { features: [{ name: 'SendTransaction', maxMessages: 4 }] },
+  };
+  connector.wallet = connected;
+  vi.mocked(api.session).mockResolvedValueOnce(authenticated);
+  await controller.start();
+  expect(controller.getSnapshot().wallet).toEqual({
+    address: user.address,
+    network: '-3',
+    maxMessages: 4,
+  });
+  const listener = vi.fn();
+  const unsubscribe = controller.subscribe(listener);
+  emit({
+    ...connected,
+    device: { features: [{ name: 'SendTransaction', maxMessages: 1 }] },
+  });
+  expect(controller.getSnapshot().wallet?.maxMessages).toBe(1);
+  expect(listener).toHaveBeenCalled();
+  emit({ ...connected, device: { features: ['SendTransaction'] } });
+  expect(controller.getSnapshot().wallet?.maxMessages).toBeNull();
+  for (const limit of [0, -1, 1.5, 256, NaN, '4']) {
+    emit({
+      ...connected,
+      device: { features: [{ name: 'SendTransaction', maxMessages: limit }] },
+    });
+    expect(controller.getSnapshot().wallet?.maxMessages).toBeNull();
+  }
+  unsubscribe();
+  controller.stop();
+});

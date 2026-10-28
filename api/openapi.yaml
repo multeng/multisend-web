@@ -1,9 +1,10 @@
 openapi: 3.1.1
 info:
   title: TON Multisend API
-  version: 0.3.0
-  description: Testnet health, wallet authentication and private durable
-    unfinished drafts. No payout execution.
+  version: 0.4.0
+  description:
+    Testnet health, wallet authentication, private unfinished drafts and stateless payout
+    preparation reports. No payout execution.
 servers:
   - url: http://127.0.0.1:8080
     description: Local development; use a same-origin reverse proxy for deployment.
@@ -53,9 +54,7 @@ paths:
         '405':
           $ref: '#/components/responses/MethodNotAllowed'
         '503':
-          description:
-            Process is not initialized, is draining, or database/schema is
-            unavailable.
+          description: Process is not initialized, is draining, or database/schema is unavailable.
           headers:
             Cache-Control:
               $ref: '#/components/headers/NoStore'
@@ -119,13 +118,11 @@ paths:
   /api/auth/verify:
     post:
       operationId: verifyWalletProof
-      summary:
-        Verify wallet ownership, consume the challenge and rotate the browser
-        session
+      summary: Verify wallet ownership, consume the challenge and rotate the browser session
       description:
-        Only testnet. Telegram wallets require active code-matching trusted
-        current state. On persistence failure reset with logout/session before a
-        new challenge; never replay the consumed proof.
+        Only testnet. Telegram wallets require active code-matching trusted current state. On
+        persistence failure reset with logout/session before a new challenge; never replay the
+        consumed proof.
       security: *a2
       requestBody:
         required: true
@@ -261,6 +258,126 @@ paths:
             Cache-Control:
               $ref: '#/components/headers/NoStore'
         default: *a3
+  /api/payouts/prepare:
+    post:
+      operationId: preparePayout
+      summary: Validate a native testnet list and plan parts without executing
+      description:
+        Explicit authenticated report. Client-advertised maxMessages is an untrusted planning
+        hint, not an authorization. Balances and network expenses are not checked. No database
+        writes.
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreparationInput'
+      responses:
+        '200':
+          description:
+            Static report only. Semantic errors return valid=false and no parts. No balances, fee
+            estimate, authorization or stored package.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreparationReport'
+        '400':
+          description: Malformed input, missing fields or bounds violation.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '401':
+          description: Authentication required or revoked.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '403':
+          description: Exact Origin and CSRF required.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '405':
+          description: Only POST is allowed.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '409':
+          description: Wallet sender or network does not match session.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '413':
+          description: JSON body exceeds64KiB.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '415':
+          description: application/json required.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '429':
+          description: Rate limited.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '503':
+          description: Session service unavailable.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
 components:
   headers:
     NoStore:
@@ -276,8 +393,8 @@ components:
   responses:
     MethodNotAllowed:
       description:
-        'Unsupported methods return 405 with Allow: GET, HEAD. Unknown
-        paths return 404. Both use standard net/http plain-text error bodies.'
+        'Unsupported methods return 405 with Allow: GET, HEAD. Unknown paths return 404. Both
+        use standard net/http plain-text error bodies.'
       headers:
         Allow:
           schema:
@@ -289,8 +406,8 @@ components:
             type: string
     APIFailure:
       description:
-        A bounded public error code. No credentials, proof, SQL or internal
-        diagnostic data is returned.
+        A bounded public error code. No credentials, proof, SQL or internal diagnostic data is
+        returned.
       headers:
         Cache-Control:
           $ref: '#/components/headers/NoStore'
@@ -353,6 +470,8 @@ components:
                 - not_found
                 - conflict
                 - quota_exceeded
+                - wallet_mismatch
+                - method_not_allowed
     AuthUser:
       type: object
       additionalProperties: false
@@ -496,8 +615,8 @@ components:
           type: string
           maxLength: 128
           description:
-            Unfinished exact user input, never interpreted as a JavaScript
-            number or a validated payout.
+            Unfinished exact user input, never interpreted as a JavaScript number or a validated
+            payout.
         comment:
           type: string
           maxLength: 500
@@ -569,6 +688,133 @@ components:
           maxItems: 100
           items:
             $ref: '#/components/schemas/DraftMetadata'
+    PreparationInput:
+      type: object
+      additionalProperties: false
+      required:
+        - address
+        - network
+        - maxMessages
+        - recipients
+      properties:
+        address:
+          type: string
+          maxLength: 128
+        network:
+          type: string
+          const: '-3'
+        maxMessages:
+          type: integer
+          minimum: 1
+          maximum: 255
+        recipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/DraftRecipient'
+          maxItems: 200
+    PreparationRow:
+      type: object
+      additionalProperties: false
+      required:
+        - canonical
+        - duplicate
+        - errors
+        - warnings
+      properties:
+        canonical:
+          type:
+            - string
+            - 'null'
+          maxLength: 128
+        duplicate:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+    PreparationPart:
+      type: object
+      additionalProperties: false
+      required:
+        - firstRecipient
+        - recipientCount
+        - totalNano
+      properties:
+        firstRecipient:
+          type: integer
+          minimum: 0
+          maximum: 199
+        recipientCount:
+          type: integer
+          minimum: 1
+          maximum: 200
+        totalNano:
+          type: string
+          pattern: ^(0|[1-9][0-9]*)$
+          maxLength: 40
+    PreparationReport:
+      type: object
+      additionalProperties: false
+      required:
+        - network
+        - address
+        - valid
+        - totalNano
+        - serviceFeeNano
+        - maxMessages
+        - rows
+        - errors
+        - parts
+        - executable
+        - balanceStatus
+        - networkFeeStatus
+      properties:
+        network:
+          type: string
+          const: '-3'
+        address:
+          type: string
+          maxLength: 128
+        valid:
+          type: boolean
+        totalNano:
+          type: string
+          pattern: ^(0|[1-9][0-9]*)$
+          maxLength: 40
+        serviceFeeNano:
+          type: string
+          const: '0'
+        maxMessages:
+          type: integer
+          minimum: 1
+          maximum: 255
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/PreparationRow'
+          maxItems: 200
+        errors:
+          type: array
+          items:
+            type: string
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PreparationPart'
+          maxItems: 200
+        executable:
+          type: boolean
+          const: false
+        balanceStatus:
+          type: string
+          const: not_checked
+        networkFeeStatus:
+          type: string
+          const: not_estimated
   securitySchemes:
     sessionCookie:
       type: apiKey
@@ -576,12 +822,11 @@ components:
       name: __Host-ton_multisend_testnet
       description:
         Secure host-only HTTPS session. Explicit loopback development uses
-        ton_multisend_testnet_dev. Anonymous login sessions are issued before
-        authentication.
+        ton_multisend_testnet_dev. Anonymous login sessions are issued before authentication.
     csrfToken:
       type: apiKey
       in: header
       name: X-CSRF-Token
       description:
-        Browser-bound secret returned by GET /api/auth/session. Mutating
-        requests must also match configured Origin.
+        Browser-bound secret returned by GET /api/auth/session. Mutating requests must also
+        match configured Origin.
