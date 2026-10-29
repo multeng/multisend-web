@@ -1,7 +1,7 @@
 openapi: 3.1.1
 info:
   title: TON Multisend API
-  version: 0.5.0
+  version: 0.5.1
   description:
     Testnet health, wallet authentication, private unfinished drafts and stateless payout
     preparation reports. No payout execution.
@@ -675,15 +675,18 @@ components:
       properties:
         address:
           type: string
+          pattern: '^[^\u0000]*$'
           maxLength: 128
         amount:
           type: string
+          pattern: '^[^\u0000]*$'
           maxLength: 128
           description:
             Unfinished exact user input, never interpreted as a JavaScript number or a validated
             payout.
         comment:
           type: string
+          pattern: '^[^\u0000]*$'
           maxLength: 500
     DraftInput:
       type: object
@@ -695,6 +698,7 @@ components:
         name: &a7
           type: string
           minLength: 1
+          pattern: '^[^\u0000]*$'
           maxLength: 120
         recipients: &a8
           type: array
