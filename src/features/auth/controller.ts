@@ -70,6 +70,7 @@ export class AuthController {
   private listeners = new Set<() => void>();
   private generation = 0;
   private request = new AbortController();
+  private resumeRequest: AbortController | null = null;
   private unsubscribe?: () => void;
   private pending?: { payload: string; expiresAt: number };
   constructor(
@@ -89,6 +90,8 @@ export class AuthController {
     this.listeners.forEach((listener) => listener());
   }
   private next() {
+    this.resumeRequest?.abort();
+    this.resumeRequest = null;
     this.request.abort();
     this.request = new AbortController();
     this.pending = undefined;
@@ -135,6 +138,47 @@ export class AuthController {
   stop() {
     this.next();
     this.unsubscribe?.();
+  }
+  async revalidate() {
+    const previous = this.state.session;
+    if (
+      !previous?.authenticated ||
+      !['idle', 'error'].includes(this.state.phase) ||
+      this.resumeRequest
+    )
+      return;
+    const generation = this.generation;
+    const request = new AbortController();
+    this.resumeRequest = request;
+    try {
+      const session = await this.api.session(request.signal);
+      if (generation !== this.generation || request.signal.aborted) return;
+      if (
+        !session.authenticated ||
+        session.user.id !== previous.user.id ||
+        session.user.address !== previous.user.address ||
+        session.user.network !== previous.user.network ||
+        (this.connector && !this.matches(this.connector.wallet, session))
+      ) {
+        this.clearPrivate();
+        this.update({
+          session: { authenticated: false, csrfToken: session.csrfToken },
+          phase: 'idle',
+          error: 'Сессия изменилась. Войдите через кошелёк заново.',
+        });
+        return;
+      }
+      this.update({ session, phase: 'idle', error: null });
+    } catch {
+      if (generation === this.generation && !request.signal.aborted)
+        this.update({
+          phase: 'error',
+          error:
+            'Не удалось обновить сессию. Проверьте соединение перед серверными действиями.',
+        });
+    } finally {
+      if (this.resumeRequest === request) this.resumeRequest = null;
+    }
   }
   private matches(wallet: ConnectedWallet | null, session: AuthSession) {
     return (

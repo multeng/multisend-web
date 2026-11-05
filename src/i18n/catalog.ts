@@ -303,6 +303,22 @@ export const english = {
     'Estimate expires at {0}. Request a new estimate after expiry.',
   'Это оценка, а не разрешение на отправку. Средства не зарезервированы; отправка ещё недоступна.':
     'This estimate does not authorize sending. Funds are not reserved; sending is still unavailable.',
+  'Установить приложение': 'Install the app',
+  'Добавьте TON Multisend на главный экран и открывайте его в отдельном окне.':
+    'Add TON Multisend to your home screen and open it in a separate window.',
+  Установить: 'Install',
+  'Используйте меню браузера для установки.':
+    'Use the browser menu to install the app.',
+  'Android: откройте меню браузера → «Установить приложение» или «Добавить на главный экран». Название пункта зависит от браузера.':
+    'Android: open the browser menu → “Install app” or “Add to Home screen”. The wording depends on the browser.',
+  'iPhone/iPad: в Safari откройте «Поделиться» → На экран «Домой». Если доступно, включите «Открывать как веб-приложение».':
+    'iPhone/iPad: in Safari, open Share → Add to Home Screen. If available, enable Open as Web App.',
+  'Если такого пункта нет, откройте сайт в Chrome на Android или Safari на iPhone. Для входа и серверных операций нужно подключение к интернету.':
+    'If the option is missing, open the site in Chrome on Android or Safari on iPhone. Sign-in and server operations require an internet connection.',
+  'Сессия изменилась. Войдите через кошелёк заново.':
+    'The session has changed. Sign in with your wallet again.',
+  'Не удалось обновить сессию. Проверьте соединение перед серверными действиями.':
+    'Could not refresh the session. Check your connection before using server actions.',
 } as const;
 
 export type MessageKey = keyof typeof english;

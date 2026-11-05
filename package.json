@@ -20,7 +20,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run api:check && npm run lint && npm run format:check && npm run typecheck && npm test && npm run build",
+    "check": "npm run api:check && npm run lint && npm run format:check && npm run typecheck && npm test && npm run build && npm run install:check",
+    "install:check": "node scripts/check-install.mjs",
     "api:generate": "node scripts/api-contract.mjs --write",
     "api:check": "node scripts/api-contract.mjs"
   },
