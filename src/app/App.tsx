@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Badge, Button } from '@radix-ui/themes';
 import { readinessQueryOptions } from '../api/readiness-query';
 import styles from './App.module.css';
+import { InstallApp } from '../features/install/InstallApp';
 
 type Connection = 'checking' | 'ready' | 'not_ready' | 'error';
 
@@ -163,6 +164,7 @@ export function App({
             </Button>
           </div>
         </section>
+        <InstallApp />
       </main>
 
       <footer className={styles.footer}>

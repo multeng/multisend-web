@@ -250,3 +250,87 @@ it('exposes current SDK planning capability and updates it for the same account'
   unsubscribe();
   controller.stop();
 });
+
+it('rechecks a foreground session without clearing same-user editing or invoking a wallet', async () => {
+  const { controller, api, connector, clear } = setup();
+  connector.wallet = wallet;
+  vi.mocked(api.session).mockResolvedValue(authenticated);
+  await controller.start();
+  await controller.revalidate();
+  expect(api.session).toHaveBeenCalledTimes(2);
+  expect(clear).not.toHaveBeenCalled();
+  expect(controller.getSnapshot().session).toEqual(authenticated);
+  expect(connector.openModal).not.toHaveBeenCalled();
+  expect(api.verify).not.toHaveBeenCalled();
+  controller.stop();
+});
+it.each(['revoked', 'foreign'])(
+  'clears private state after a %s foreground session',
+  async (kind) => {
+    const { controller, api, connector, clear } = setup();
+    connector.wallet = wallet;
+    vi.mocked(api.session)
+      .mockResolvedValueOnce(authenticated)
+      .mockResolvedValueOnce(
+        kind === 'revoked'
+          ? anonymous
+          : { ...authenticated, user: { ...user, id: 'other' } },
+      );
+    await controller.start();
+    await controller.revalidate();
+    expect(clear).toHaveBeenCalledOnce();
+    expect(controller.getSnapshot().session?.authenticated).toBe(false);
+    expect(api.logout).not.toHaveBeenCalled();
+    controller.stop();
+  },
+);
+it('preserves editing on unavailable foreground checks without claiming freshness', async () => {
+  const { controller, api, connector, clear } = setup();
+  connector.wallet = wallet;
+  vi.mocked(api.session)
+    .mockResolvedValueOnce(authenticated)
+    .mockRejectedValueOnce(new Error('private transport detail'));
+  await controller.start();
+  await controller.revalidate();
+  expect(clear).not.toHaveBeenCalled();
+  expect(controller.getSnapshot().session).toEqual(authenticated);
+  expect(controller.getSnapshot().error).toBe(
+    'Не удалось обновить сессию. Проверьте соединение перед серверными действиями.',
+  );
+  controller.stop();
+});
+it('deduplicates foreground checks and suppresses a reply after logout', async () => {
+  const { controller, api, connector } = setup();
+  connector.wallet = wallet;
+  let resolve!: (value: typeof authenticated) => void;
+  vi.mocked(api.session)
+    .mockResolvedValueOnce(authenticated)
+    .mockImplementationOnce(
+      () =>
+        new Promise((r) => {
+          resolve = r;
+        }),
+    )
+    .mockResolvedValue(anonymous);
+  await controller.start();
+  const pending = controller.revalidate();
+  await controller.revalidate();
+  expect(api.session).toHaveBeenCalledTimes(2);
+  const signal = vi.mocked(api.session).mock.calls[1]![0];
+  await controller.logout();
+  expect(signal.aborted).toBe(true);
+  resolve(authenticated);
+  await pending;
+  expect(controller.getSnapshot().session?.authenticated).toBe(false);
+  controller.stop();
+});
+it('does not revalidate while proof approval is pending', async () => {
+  const { controller, api } = setup();
+  await controller.start();
+  await controller.login();
+  const calls = vi.mocked(api.session).mock.calls.length;
+  await controller.revalidate();
+  expect(api.session).toHaveBeenCalledTimes(calls);
+  expect(controller.getSnapshot().phase).toBe('waiting');
+  controller.stop();
+});

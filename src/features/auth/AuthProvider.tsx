@@ -25,7 +25,22 @@ function SessionProvider({
   );
   useEffect(() => {
     void controller.start();
-    return () => controller.stop();
+    let wasHidden = document.visibilityState === 'hidden';
+    const resume = () => {
+      if (document.visibilityState === 'hidden') {
+        wasHidden = true;
+        return;
+      }
+      if (wasHidden) {
+        wasHidden = false;
+        void controller.revalidate();
+      }
+    };
+    document.addEventListener('visibilitychange', resume);
+    return () => {
+      document.removeEventListener('visibilitychange', resume);
+      controller.stop();
+    };
   }, [controller]);
   return <AuthContext value={controller}>{children}</AuthContext>;
 }

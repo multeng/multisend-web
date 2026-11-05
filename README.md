@@ -110,3 +110,11 @@ After a valid server part plan, Estimate costs explicitly uploads the ordered li
 Input, bounce, capability, wallet or session changes cancel/hide old estimates; new previews cannot revive an old query cache result. No automatic retry, focus/reconnect refetch, persisted cache or offline replay. Runtime validation checks identity, bigint accounting, per-part totals/costs, reserve and conservative monotonic lifetime. Expired estimates require an explicit recheck. This is no authorization, reservation or sending capability.
 
 OpenAPI0.6.0 snapshot and generated types are public and standalone. Merge the backend quote API before this consumer. Local synthetic browser tests do not establish live fee accuracy, real-wallet/device behavior or deployment. See docs/reviews/2026-11-05-fee-quote-preview.md.
+
+## Installable web app
+
+The public manifest.webmanifest provides stable root id/start/scope, standalone display and existing-brand192/512PNG/maskable icons; apple-touch-icon180 is linked separately. TON Connect still uses its own manifest. The RU/EN installation disclosure offers a native install button only when the browser supplies an install event, and manual Android/iOS instructions otherwise. Installed/standalone windows hide it. No service worker, offline API cache or background replay is registered.
+
+Returning from hidden state refreshes the server session via one read-only bounded request. Same-identity refresh preserves editing; revoked/changed identity clears private queries and requires login. Temporary unavailability preserves local editing and reports the failed check. Login/proof operations and wallet navigation are not restarted. Existing quote expiry checks still apply on foreground events.
+
+The full check builds and validates production manifest/icon links and PNGdimensions through npm run install:check. Local browser and synthetic install tests do not prove installation or TON Connect roundtrip on physical Android/iOS; those require separate authorized HTTPS rollout/device checks. See docs/reviews/2026-11-05-installable-web-app.md.
