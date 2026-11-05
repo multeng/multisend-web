@@ -13,6 +13,7 @@ import type { AuthController } from '../auth/controller';
 import { formatAmount, validateRecipients } from '../recipients/validation';
 import { preparePayout } from './api';
 import { BalancePanel } from './BalancePanel';
+import { QuotePanel } from './QuotePanel';
 import styles from './PreparationPanel.module.css';
 
 export function PreparationPanel({
@@ -142,7 +143,7 @@ function ReportPanel({
           <p>{t('Комиссия сервиса: 0 TON')}</p>
           <p>
             {t(
-              'Сетевые расходы ещё не рассчитаны. Этот отчёт не разрешает отправку средств.',
+              'План частей не включает сетевые расходы. Оценка запрашивается отдельно.',
             )}
           </p>
           {query.data.valid ? (
@@ -164,6 +165,11 @@ function ReportPanel({
                 controller={controller}
                 totalNano={query.data.totalNano}
                 identity={JSON.stringify(input)}
+              />
+              <QuotePanel
+                input={input}
+                session={session}
+                controller={controller}
               />
               <ol>
                 {query.data.parts.map((part) => (

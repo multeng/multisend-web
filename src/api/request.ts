@@ -33,6 +33,11 @@ const errorBody = z.object({
       'quota_exceeded',
       'wallet_mismatch',
       'method_not_allowed',
+      'unsupported_wallet',
+      'insufficient_balance',
+      'simulation_incomplete',
+      'quote_busy',
+      'quote_unavailable',
     ]),
   }),
 });

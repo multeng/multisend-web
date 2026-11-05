@@ -68,11 +68,41 @@ it('fetches only on explicit action and labels unchecked fees and balance', asyn
   expect(screen.getByText('Комиссия сервиса: 0 TON')).toBeInTheDocument();
   expect(
     screen.getByText(
-      'Сетевые расходы ещё не рассчитаны. Этот отчёт не разрешает отправку средств.',
+      'План частей не включает сетевые расходы. Оценка запрашивается отдельно.',
     ),
   ).toBeInTheDocument();
   expect(
     screen.queryByRole('button', { name: 'Отправить' }),
+  ).not.toBeInTheDocument();
+});
+
+it('offers a separate explicit quote after preparation and cancels it on session loss', async () => {
+  const fetch = vi
+    .fn()
+    .mockResolvedValueOnce(new Response(JSON.stringify(report)))
+    .mockImplementation(() => new Promise<Response>(() => {}));
+  vi.stubGlobal('fetch', fetch);
+  const { event, view, tree, controller } = setup();
+  expect(
+    screen.queryByRole('button', { name: 'Рассчитать расходы' }),
+  ).not.toBeInTheDocument();
+  await event.click(
+    screen.getByRole('button', {
+      name: 'Проверить на сервере и рассчитать части',
+    }),
+  );
+  await screen.findByRole('button', { name: 'Рассчитать расходы' });
+  expect(fetch).toHaveBeenCalledOnce();
+  await event.click(screen.getByRole('button', { name: 'Рассчитать расходы' }));
+  const signal = fetch.mock.calls[1]![1].signal as AbortSignal;
+  vi.spyOn(controller, 'getSnapshot').mockReturnValue({
+    ...snapshot,
+    session: { authenticated: false, csrfToken: 'new' },
+  } as ReturnType<AuthController['getSnapshot']>);
+  view.rerender(tree());
+  await waitFor(() => expect(signal.aborted).toBe(true));
+  expect(
+    screen.queryByRole('button', { name: 'Рассчитать расходы' }),
   ).not.toBeInTheDocument();
 });
 it('cancels changed input and ignores a late server response', async () => {

@@ -32,7 +32,12 @@ export type ApiError = {
       | 'conflict'
       | 'quota_exceeded'
       | 'wallet_mismatch'
-      | 'method_not_allowed';
+      | 'method_not_allowed'
+      | 'unsupported_wallet'
+      | 'insufficient_balance'
+      | 'simulation_incomplete'
+      | 'quote_busy'
+      | 'quote_unavailable';
   };
 };
 
@@ -164,6 +169,73 @@ export type BalanceReport = {
   expiresAt: number;
   executable: false;
   networkFeeStatus: 'not_estimated';
+};
+
+export type FeeQuoteInput = {
+  /**
+   * Connected wallet; must match the authenticated session after canonicalization.
+   */
+  address: string;
+  network: '-3';
+  /**
+   * Advertised capability; values above 4 return unsupported_wallet, never clamped.
+   */
+  maxMessages: number;
+  recipients: Array<{
+    address: string;
+    /**
+     * Exact positive TON decimal, at most 9 fractional digits; no exponent or rounding.
+     */
+    amount: string;
+    comment: string;
+  }>;
+  /**
+   * Exactly one explicitly required boolean per ordered recipient; null is invalid.
+   */
+  bounce: Array<boolean>;
+};
+
+/**
+ * Exact nonnegative nanotons within native 120-bit bounds.
+ */
+export type QuoteNano = string;
+
+export type FeeQuotePart = {
+  firstRecipient: number;
+  recipientCount: number;
+  totalNano: QuoteNano;
+  estimatedNetworkFeeNano: QuoteNano;
+};
+
+export type FeeQuoteReport = {
+  address: string;
+  network: '-3';
+  maxMessages: number;
+  /**
+   * Input binding only; not signed, stored, or usable as an authorization token.
+   */
+  intentHash: string;
+  /**
+   * Provisional reserve max(ceil(estimatedNetworkFeeNano/5),10000000) once per ledger, not a fee or guarantee.
+   */
+  reservePolicy: 'native-v1';
+  checkedAt: number;
+  estimatedAt: number;
+  /**
+   * No later than 30 seconds after source block/check; never extended by simulation.
+   */
+  expiresAt: number;
+  blockSeqno: number;
+  blockRootHash: string;
+  balanceNano: QuoteNano;
+  transferTotalNano: QuoteNano;
+  estimatedNetworkFeeNano: QuoteNano;
+  serviceFeeNano: '0';
+  reserveNano: QuoteNano;
+  requiredBalanceNano: QuoteNano;
+  deficitNano: QuoteNano;
+  parts: Array<FeeQuotePart>;
+  executable: false;
 };
 
 export type CheckHealthData = {
@@ -610,3 +682,71 @@ export type ReadPayoutBalanceResponses = {
 
 export type ReadPayoutBalanceResponse =
   ReadPayoutBalanceResponses[keyof ReadPayoutBalanceResponses];
+
+export type QuotePayoutData = {
+  /**
+   * Strict JSON, maximum 64 KiB. Query parameters are rejected.
+   */
+  body: FeeQuoteInput;
+  headers: {
+    Origin: string;
+  };
+  path?: never;
+  query?: never;
+  url: '/api/payouts/quote';
+};
+
+export type QuotePayoutErrors = {
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  400: ApiError;
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  401: ApiError;
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  403: ApiError;
+  /**
+   * method_not_allowed; only POST is allowed.
+   */
+  405: ApiError;
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  409: ApiError;
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  413: ApiError;
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  415: ApiError;
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  422: ApiError;
+  /**
+   * A bounded public error code. No credentials, proof, SQL or internal diagnostic data is returned.
+   */
+  429: ApiError;
+  /**
+   * quote_busy (Retry-After 2) or quote_unavailable for source, worker, stale, expired, canceled or deadline failures; service_unavailable for session failures.
+   */
+  503: ApiError;
+};
+
+export type QuotePayoutError = QuotePayoutErrors[keyof QuotePayoutErrors];
+
+export type QuotePayoutResponses = {
+  /**
+   * Fresh proof-verified estimate, not a reservation or permission to send. If the VM cannot emit every message no estimate is returned. A successful estimate can still show a deficit against the additional reserve. Unix-second timestamps.
+   */
+  200: FeeQuoteReport;
+};
+
+export type QuotePayoutResponse =
+  QuotePayoutResponses[keyof QuotePayoutResponses];
