@@ -243,8 +243,8 @@ export const english = {
     'Could not get a plan. Check your wallet connection and try again.',
   'План частей по данным кошелька': 'Part plan based on wallet capabilities',
   'Комиссия сервиса: 0 TON': 'Service fee: 0 TON',
-  'Сетевые расходы ещё не рассчитаны. Этот отчёт не разрешает отправку средств.':
-    'Network costs have not been estimated. This report does not authorize sending funds.',
+  'План частей не включает сетевые расходы. Оценка запрашивается отдельно.':
+    'The part plan excludes network costs. Request an estimate separately.',
   'Частей / отдельных запросов подписи: {0}':
     'Parts / separate signature requests: {0}',
   'Строки {0}–{1}: {2} TON': 'Rows {0}–{1}: {2} TON',
@@ -270,6 +270,39 @@ export const english = {
     'The balance covers recipient amounts, excluding network costs.',
   'Проверено на блоке {0}. Снимок действует не более 30 секунд.':
     'Checked at block {0}. The snapshot is valid for at most 30 seconds.',
+  'Оценка расходов': 'Cost estimate',
+  'По кнопке список и настройки отправятся на сервер для расчёта. Только активный V4R2; переводы не выполняются.':
+    'This button sends the list and settings to the server for estimation. Active V4R2 only; no transfers are made.',
+  'Возвращать перевод при ошибке получателя (bounce)':
+    'Return transfer on recipient error (bounce)',
+  'Настройка применяется ко всем строкам. При выключенном bounce перевод может пополнить неактивный адрес.':
+    'This setting applies to every row. With bounce off, a transfer may fund an inactive address.',
+  'Рассчитываем расходы…': 'Estimating costs…',
+  'Рассчитать расходы': 'Estimate costs',
+  'Оценка доступна только для активного V4R2 с лимитом 1–4 сообщения.':
+    'Estimates support only active V4R2 wallets with a limit of 1–4 messages.',
+  'Расчёт занят. Запросите оценку повторно через несколько секунд.':
+    'Estimation is busy. Request another estimate in a few seconds.',
+  'Баланс не покрывает сумму переводов. Оценка сетевых расходов не получена.':
+    'The balance does not cover the transfers. Network costs could not be estimated.',
+  'Не удалось смоделировать все переводы. Полная оценка расходов недоступна.':
+    'Not all transfers could be simulated. A complete cost estimate is unavailable.',
+  'Не удалось рассчитать расходы. Проверьте кошелёк и повторите запрос позднее.':
+    'Could not estimate costs. Check the wallet and try again later.',
+  'Оценка устарела. Рассчитайте расходы заново.':
+    'The estimate has expired. Estimate costs again.',
+  'Комиссия сервиса': 'Service fee',
+  'Оценка сетевых расходов': 'Estimated network costs',
+  Резерв: 'Reserve',
+  'Требуемый баланс': 'Required balance',
+  'Проверенный баланс': 'Verified balance',
+  'Дефицит с учётом резерва': 'Shortfall including reserve',
+  'Резерв — временный запас native-v1, не комиссия и не гарантия стоимости.':
+    'The reserve is provisional native-v1 headroom, not a fee or a cost guarantee.',
+  'Срок оценки: до {0}. После истечения нужен новый расчёт.':
+    'Estimate expires at {0}. Request a new estimate after expiry.',
+  'Это оценка, а не разрешение на отправку. Средства не зарезервированы; отправка ещё недоступна.':
+    'This estimate does not authorize sending. Funds are not reserved; sending is still unavailable.',
 } as const;
 
 export type MessageKey = keyof typeof english;

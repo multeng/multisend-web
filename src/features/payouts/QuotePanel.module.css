@@ -1,0 +1,44 @@
+.panel {
+  min-width: 0;
+  margin-block: 24px;
+  overflow-wrap: anywhere;
+}
+
+.bounce {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.bounce input {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.costs {
+  display: grid;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.costs dt {
+  color: var(--gray-11);
+}
+
+.costs dd {
+  margin: 0 0 12px;
+}
+
+@media (min-width: 600px) {
+  .costs {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .costs dd {
+    margin: 0;
+  }
+}

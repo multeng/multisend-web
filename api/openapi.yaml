@@ -1,10 +1,10 @@
 openapi: 3.1.1
 info:
   title: TON Multisend API
-  version: 0.5.1
+  version: 0.6.0
   description:
     Testnet health, wallet authentication, private unfinished drafts and stateless payout
-    preparation reports. No payout execution.
+    preparation reports and native V4R2 cost estimates. No payout execution.
 servers:
   - url: http://127.0.0.1:8080
     description: Local development; use a same-origin reverse proxy for deployment.
@@ -443,10 +443,102 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/APIError'
+  /api/payouts/quote:
+    post:
+      operationId: quotePayout
+      summary: Estimate native testnet sender costs without executing
+      description:
+        Explicit authenticated estimate for ACTIVE V4R2 only. Exact ordered input and bounce
+        choices bind the intent hash, which is neither authorization nor a saved attempt.
+        One shared operation without a queue; total source and worker budget 8 seconds,
+        capped by caller and auth deadlines. No automatic retries or database writes.
+      security: *a5
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Strict JSON, maximum 64 KiB. Query parameters are rejected.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeeQuoteInput'
+      responses:
+        '200':
+          description:
+            Fresh proof-verified estimate, not a reservation or permission to send. If the VM
+            cannot emit every message no estimate is returned. A successful estimate can
+            still show a deficit against the additional reserve. Unix-second timestamps.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeeQuoteReport'
+        '400':
+          description: invalid_request; malformed, missing, null, unknown or invalid input.
+          $ref: '#/components/responses/APIFailure'
+        '401':
+          description: unauthorized; authentication required or revoked.
+          $ref: '#/components/responses/APIFailure'
+        '403':
+          description: origin_invalid or csrf_invalid; configured Origin and CSRF required.
+          $ref: '#/components/responses/APIFailure'
+        '405':
+          description: method_not_allowed; only POST is allowed.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Allow:
+              schema:
+                type: string
+                const: POST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+        '409':
+          description: wallet_mismatch; connected address/network does not match session.
+          $ref: '#/components/responses/APIFailure'
+        '413':
+          description: invalid_request; body exceeds 64 KiB.
+          $ref: '#/components/responses/APIFailure'
+        '415':
+          description: invalid_request; application/json required.
+          $ref: '#/components/responses/APIFailure'
+        '422':
+          description:
+            unsupported_wallet (including advertised capacity outside 1..4),
+            insufficient_balance (transfer amount alone cannot be funded), or
+            simulation_incomplete (VM did not emit every message). No fabricated zero fee.
+          $ref: '#/components/responses/APIFailure'
+        '429':
+          description: rate_limited by existing auth middleware.
+          $ref: '#/components/responses/APIFailure'
+        '503':
+          description:
+            quote_busy (Retry-After 2) or quote_unavailable for source, worker, stale,
+            expired, canceled or deadline failures; service_unavailable for session failures.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Retry-After:
+              description: Present for quote_busy; user must explicitly request another estimate.
+              schema:
+                type: string
+                const: '2'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
 components:
   headers:
     NoStore:
-      description: Health and readiness responses must not be cached.
+      description: Responses must not be cached.
       schema:
         type: string
         const: no-store
@@ -537,6 +629,11 @@ components:
                 - quota_exceeded
                 - wallet_mismatch
                 - method_not_allowed
+                - unsupported_wallet
+                - insufficient_balance
+                - simulation_incomplete
+                - quote_busy
+                - quote_unavailable
     AuthUser:
       type: object
       additionalProperties: false
@@ -949,6 +1046,158 @@ components:
           type: string
           enum:
             - not_estimated
+    FeeQuoteInput:
+      type: object
+      additionalProperties: false
+      required: [address, network, maxMessages, recipients, bounce]
+      properties:
+        address:
+          type: string
+          maxLength: 128
+          description: Connected wallet; must match the authenticated session after canonicalization.
+        network:
+          type: string
+          const: '-3'
+        maxMessages:
+          type: integer
+          minimum: 1
+          maximum: 255
+          description: Advertised capability; values above 4 return unsupported_wallet, never clamped.
+        recipients:
+          type: array
+          minItems: 1
+          maxItems: 200
+          items:
+            type: object
+            additionalProperties: false
+            required: [address, amount, comment]
+            properties:
+              address:
+                type: string
+                maxLength: 128
+              amount:
+                type: string
+                maxLength: 128
+                description: Exact positive TON decimal, at most 9 fractional digits; no exponent or rounding.
+              comment:
+                type: string
+                maxLength: 500
+        bounce:
+          type: array
+          minItems: 1
+          maxItems: 200
+          description: Exactly one explicitly required boolean per ordered recipient; null is invalid.
+          items:
+            type: boolean
+    QuoteNano:
+      type: string
+      pattern: ^(0|[1-9][0-9]*)$
+      maxLength: 37
+      description: Exact nonnegative nanotons within native 120-bit bounds.
+    FeeQuotePart:
+      type: object
+      additionalProperties: false
+      required:
+        [firstRecipient, recipientCount, totalNano, estimatedNetworkFeeNano]
+      properties:
+        firstRecipient:
+          type: integer
+          minimum: 0
+          maximum: 199
+        recipientCount:
+          type: integer
+          minimum: 1
+          maximum: 4
+        totalNano:
+          $ref: '#/components/schemas/QuoteNano'
+        estimatedNetworkFeeNano:
+          $ref: '#/components/schemas/QuoteNano'
+    FeeQuoteReport:
+      type: object
+      additionalProperties: false
+      required:
+        - address
+        - network
+        - maxMessages
+        - intentHash
+        - reservePolicy
+        - checkedAt
+        - estimatedAt
+        - expiresAt
+        - blockSeqno
+        - blockRootHash
+        - balanceNano
+        - transferTotalNano
+        - estimatedNetworkFeeNano
+        - serviceFeeNano
+        - reserveNano
+        - requiredBalanceNano
+        - deficitNano
+        - parts
+        - executable
+      properties:
+        address:
+          type: string
+          pattern: ^0:[0-9a-f]{64}$
+        network:
+          type: string
+          const: '-3'
+        maxMessages:
+          type: integer
+          minimum: 1
+          maximum: 4
+        intentHash:
+          type: string
+          pattern: ^[0-9a-f]{64}$
+          description: Input binding only; not signed, stored, or usable as an authorization token.
+        reservePolicy:
+          type: string
+          const: native-v1
+          description: Provisional reserve max(ceil(estimatedNetworkFeeNano/5),10000000) once per ledger, not a fee or guarantee.
+        checkedAt:
+          type: integer
+          minimum: 1
+          maximum: 4294967295
+        estimatedAt:
+          type: integer
+          minimum: 1
+          maximum: 4294967295
+        expiresAt:
+          type: integer
+          minimum: 1
+          maximum: 4294967295
+          description: No later than 30 seconds after source block/check; never extended by simulation.
+        blockSeqno:
+          type: integer
+          minimum: 1
+          maximum: 4294967295
+        blockRootHash:
+          type: string
+          pattern: ^[0-9a-f]{64}$
+        balanceNano:
+          $ref: '#/components/schemas/QuoteNano'
+        transferTotalNano:
+          $ref: '#/components/schemas/QuoteNano'
+        estimatedNetworkFeeNano:
+          $ref: '#/components/schemas/QuoteNano'
+        serviceFeeNano:
+          type: string
+          const: '0'
+        reserveNano:
+          $ref: '#/components/schemas/QuoteNano'
+        requiredBalanceNano:
+          $ref: '#/components/schemas/QuoteNano'
+        deficitNano:
+          $ref: '#/components/schemas/QuoteNano'
+        parts:
+          type: array
+          minItems: 1
+          maxItems: 200
+          items:
+            $ref: '#/components/schemas/FeeQuotePart'
+        executable:
+          type: boolean
+          const: false
   securitySchemes:
     sessionCookie:
       type: apiKey

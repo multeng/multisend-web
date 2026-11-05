@@ -102,3 +102,11 @@ Local signed-fixture/API tests and browser layout checks do not replace real TON
 ## Private drafts
 
 After verified testnet login, the private workspace creates empty drafts, lists and opens saved records, renames while preserving recipient data, and confirms deletion. Conflicting versions keep the entered name and offer explicit reload. The shell resets with identity changes and ignores late writes after logout. Full recipient editing, CSV import and payout execution are subsequent stages. Draft storage limits (100 records,200 rows,64KiB) are separate from future payout limits.
+
+## Native testnet cost estimates
+
+After a valid server part plan, Estimate costs explicitly uploads the ordered list and bounce settings to protected POST /api/payouts/quote. RU/EN mobile UI separates recipient amounts, service fee0, estimated network costs, provisional native-v1 reserve, verified/required balance, deficit, parts/signature count and expiry. Only ACTIVE V4R2 and advertised capacity1..4 are supported;200rows and64KiB limits remain.
+
+Input, bounce, capability, wallet or session changes cancel/hide old estimates; new previews cannot revive an old query cache result. No automatic retry, focus/reconnect refetch, persisted cache or offline replay. Runtime validation checks identity, bigint accounting, per-part totals/costs, reserve and conservative monotonic lifetime. Expired estimates require an explicit recheck. This is no authorization, reservation or sending capability.
+
+OpenAPI0.6.0 snapshot and generated types are public and standalone. Merge the backend quote API before this consumer. Local synthetic browser tests do not establish live fee accuracy, real-wallet/device behavior or deployment. See docs/reviews/2026-11-05-fee-quote-preview.md.
