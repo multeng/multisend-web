@@ -12,13 +12,15 @@ import { expect, it, vi } from 'vitest';
 import type { AuthController } from '../auth/controller';
 import { QuotePanel } from './QuotePanel';
 import { quoteInput, quoteReport } from './quote-fixtures.test-data';
+import { I18nProvider } from '../../i18n/I18nProvider';
 
 const session = {
   authenticated: true as const,
   csrfToken: 'csrf',
   user: { id: 'u', address: quoteInput.address, network: '-3' as const },
 };
-function setup() {
+function setup(locale: 'ru' | 'en' = 'ru') {
+  vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(locale);
   const controller = { logout: vi.fn() } as unknown as AuthController;
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -26,7 +28,9 @@ function setup() {
   const tree = (input = quoteInput, user = session) => (
     <Theme>
       <QueryClientProvider client={client}>
-        <QuotePanel input={input} session={user} controller={controller} />
+        <I18nProvider>
+          <QuotePanel input={input} session={user} controller={controller} />
+        </I18nProvider>
       </QueryClientProvider>
     </Theme>
   );
@@ -263,18 +267,68 @@ it('clears authentication on 401', async () => {
   await waitFor(() => expect(controller.logout).toHaveBeenCalledOnce());
 });
 
-it('explains unsupported capacity without an upload', () => {
+it.each(['ru', 'en'] as const)(
+  'explains unsupported capacity in %s without an upload',
+  (locale) => {
+    const fetch = vi.fn();
+    vi.stubGlobal('fetch', fetch);
+    const { view, tree } = setup(locale);
+    view.rerender(tree({ ...quoteInput, maxMessages: 5 }));
+    expect(
+      screen.queryByRole('button', {
+        name: locale === 'ru' ? 'Рассчитать расходы' : 'Estimate costs',
+      }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(
+        locale === 'ru'
+          ? /Кошелёк сообщает лимит 5 сообщений/
+          : /Your wallet reports a limit of 5 messages/,
+      ),
+    ).toBeInTheDocument();
+    expect(fetch).not.toHaveBeenCalled();
+  },
+);
+
+it('describes bounce limits before requesting a quote', () => {
   const fetch = vi.fn();
   vi.stubGlobal('fetch', fetch);
-  const { view, tree } = setup();
-  view.rerender(tree({ ...quoteInput, maxMessages: 5 }));
-  expect(
-    screen.queryByRole('button', { name: 'Рассчитать расходы' }),
-  ).not.toBeInTheDocument();
-  expect(
-    screen.getByText(
-      'Оценка доступна только для активного V4R2 с лимитом 1–4 сообщения.',
-    ),
-  ).toBeInTheDocument();
+  setup();
+  const checkbox = screen.getByRole('checkbox', {
+    name: 'Возвращать перевод при ошибке получателя (bounce)',
+  });
+  expect(checkbox).not.toBeChecked();
+  expect(checkbox).toHaveAccessibleDescription(/Возврат не гарантирован/);
+  expect(checkbox).toHaveAccessibleDescription(
+    /не отменяет перевод на неверный адрес/,
+  );
   expect(fetch).not.toHaveBeenCalled();
 });
+
+it.each(['ru', 'en'] as const)(
+  'explains unsupported_wallet honestly in %s',
+  async (locale) => {
+    const fetch = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ error: { code: 'unsupported_wallet' } }), {
+        status: 422,
+      }),
+    );
+    vi.stubGlobal('fetch', fetch);
+    const { event } = setup(locale);
+    await event.click(
+      screen.getByRole('button', {
+        name: locale === 'ru' ? 'Рассчитать расходы' : 'Estimate costs',
+      }),
+    );
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent(
+      locale === 'ru'
+        ? /состояние или версия контракта/
+        : /contract state or version is unsupported/,
+    );
+    expect(alert).toHaveTextContent(/ACTIVE/);
+    expect(alert).toHaveTextContent(/V4R2/);
+    expect(alert).not.toHaveTextContent(/Ваш кошелёк не активирован/);
+    expect(fetch).toHaveBeenCalledOnce();
+  },
+);
