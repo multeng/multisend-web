@@ -11,6 +11,7 @@ import { Theme } from '@radix-ui/themes';
 import { expect, it, vi } from 'vitest';
 import type { AuthController } from '../auth/controller';
 import { BalancePanel } from './BalancePanel';
+import { I18nProvider } from '../../i18n/I18nProvider';
 const address = '0:' + '0'.repeat(64);
 const user = { id: 'u', address, network: '-3' as const };
 const fixture = (balanceNano = '1', accountStatus = 'ACTIVE') => ({
@@ -26,7 +27,8 @@ const fixture = (balanceNano = '1', accountStatus = 'ACTIVE') => ({
   executable: false,
   networkFeeStatus: 'not_estimated',
 });
-function setup() {
+function setup(locale: 'ru' | 'en' = 'ru') {
+  vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(locale);
   const controller = { logout: vi.fn() } as unknown as AuthController;
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -34,13 +36,15 @@ function setup() {
   const tree = (identity = 'first') => (
     <Theme>
       <QueryClientProvider client={client}>
-        <BalancePanel
-          key={identity}
-          user={user}
-          controller={controller}
-          totalNano="9007199254740993"
-          identity={identity}
-        />
+        <I18nProvider>
+          <BalancePanel
+            key={identity}
+            user={user}
+            controller={controller}
+            totalNano="9007199254740993"
+            identity={identity}
+          />
+        </I18nProvider>
       </QueryClientProvider>
     </Theme>
   );
@@ -59,7 +63,7 @@ it('reads on explicit action and computes exact payout-only shortfall', async ()
   expect(screen.getByText('9007199.254740992 TON')).toBeInTheDocument();
   expect(
     screen.getByText(
-      'Сетевые расходы не учтены. Достаточность средств для отправки ещё не проверена.',
+      'Эта проверка баланса не включает сетевые расходы и резерв. Полный расчёт выполняется отдельно в блоке «Оценка расходов», если кошелёк поддерживается.',
     ),
   ).toBeInTheDocument();
 });
@@ -79,19 +83,33 @@ it('does not call payout coverage enough funds for sending', async () => {
   );
   expect(screen.queryByText('Средств достаточно')).not.toBeInTheDocument();
 });
-it('warns about frozen account instead of asserting spendability', async () => {
-  vi.stubGlobal(
-    'fetch',
-    vi
-      .fn()
-      .mockResolvedValue(new Response(JSON.stringify(fixture('0', 'FROZEN')))),
-  );
-  const { event } = setup();
-  await event.click(screen.getByRole('button', { name: 'Проверить баланс' }));
-  await screen.findByText(
-    'Состояние кошелька не ACTIVE. Возможность отправки не подтверждена.',
-  );
-});
+it.each([
+  ['UNINIT', 'ru', /контракт ещё не развёрнут/],
+  ['FROZEN', 'ru', /контракт заморожен/],
+  ['NON_EXIST', 'ru', /аккаунт ещё не существует/],
+  ['ACTIVE', 'ru', /Активный контракт не подтверждает версию V4R2/],
+  ['UNINIT', 'en', /contract has not been deployed/],
+  ['FROZEN', 'en', /contract is frozen/],
+  ['NON_EXIST', 'en', /account does not yet exist/],
+  ['ACTIVE', 'en', /active contract does not establish that it is V4R2/],
+] as const)(
+  'explains reported %s in %s without asserting spendability',
+  async (status, locale, explanation) => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValue(new Response(JSON.stringify(fixture('0', status)))),
+    );
+    const { event } = setup(locale);
+    await event.click(
+      screen.getByRole('button', {
+        name: locale === 'ru' ? 'Проверить баланс' : 'Check balance',
+      }),
+    );
+    await screen.findByText(explanation);
+  },
+);
 it('hides expired results and requires explicit recheck', async () => {
   vi.stubGlobal(
     'fetch',

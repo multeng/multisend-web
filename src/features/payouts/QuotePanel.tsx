@@ -20,13 +20,18 @@ type Props = {
 export function QuotePanel({ input, session, controller }: Props) {
   const { t } = useI18n();
   const [bounce, setBounce] = useState(false);
+  const bounceDescription = useId();
   if (input.maxMessages > 4 || input.maxMessages < 1)
     return (
-      <p>
-        {t(
-          'Оценка доступна только для активного V4R2 с лимитом 1–4 сообщения.',
-        )}
-      </p>
+      <section className={styles.panel} aria-label={t('Оценка расходов')}>
+        <h4>{t('Оценка расходов')}</h4>
+        <p>
+          {t(
+            'Кошелёк сообщает лимит {0} сообщений. Сейчас расчёт поддерживает лимит от 1 до 4. Проверка списка и черновики остаются доступны.',
+            { 0: input.maxMessages },
+          )}
+        </p>
+      </section>
     );
   const request = { ...input, bounce: input.recipients.map(() => bounce) };
   return (
@@ -41,13 +46,14 @@ export function QuotePanel({ input, session, controller }: Props) {
         <input
           type="checkbox"
           checked={bounce}
+          aria-describedby={bounceDescription}
           onChange={(e) => setBounce(e.target.checked)}
         />
         {t('Возвращать перевод при ошибке получателя (bounce)')}
       </label>
-      <p>
+      <p id={bounceDescription}>
         {t(
-          'Настройка применяется ко всем строкам. При выключенном bounce перевод может пополнить неактивный адрес.',
+          'Возврат не гарантирован; сетевые расходы возможны. Bounce не отменяет перевод на неверный адрес. При выключенном bounce перевод может пополнить неактивный адрес. Настройка применяется ко всем строкам оценки.',
         )}
       </p>
       <QuoteRequest
@@ -117,7 +123,7 @@ function QuoteRequest({
           {query.error instanceof ApiError &&
           query.error.code === 'unsupported_wallet'
             ? t(
-                'Оценка доступна только для активного V4R2 с лимитом 1–4 сообщения.',
+                'Расчёт недоступен: состояние или версия контракта не поддерживается. Нужен активный (ACTIVE) контракт V4R2 и лимит 1–4 сообщения. Состояние можно посмотреть через «Проверить баланс»; наличие TON само по себе не подтверждает поддержку.',
               )
             : query.error instanceof ApiError &&
                 query.error.code === 'quote_busy'

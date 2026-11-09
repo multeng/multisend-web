@@ -8,6 +8,17 @@ import type { AuthController } from '../auth/controller';
 import { formatAmount } from '../recipients/validation';
 import { readBalance, type BalanceResult } from './balance';
 
+const accountExplanations = {
+  ACTIVE:
+    'Активный контракт не подтверждает версию V4R2. Для оценки также нужен лимит 1–4 сообщения; отправка ещё недоступна.',
+  UNINIT:
+    'UNINIT: средства могут быть на адресе, но контракт ещё не развёрнут. Текущий расчёт такой кошелёк не поддерживает.',
+  FROZEN:
+    'FROZEN: контракт заморожен. Текущий расчёт такой кошелёк не поддерживает.',
+  NON_EXIST:
+    'NON_EXIST: аккаунт ещё не существует в этой сети. Текущий расчёт недоступен.',
+} as const;
+
 export function BalancePanel({
   user,
   controller,
@@ -59,7 +70,7 @@ export function BalancePanel({
       )}
       <p>
         {t(
-          'Сетевые расходы не учтены. Достаточность средств для отправки ещё не проверена.',
+          'Эта проверка баланса не включает сетевые расходы и резерв. Полный расчёт выполняется отдельно в блоке «Оценка расходов», если кошелёк поддерживается.',
         )}
       </p>
     </section>
@@ -109,13 +120,7 @@ function BalanceResultView({
         <strong>{formatAmount(BigInt(report.balanceNano))} TON</strong>
       </p>
       <p>{t('Состояние кошелька: {0}', { 0: report.accountStatus })}</p>
-      {report.accountStatus !== 'ACTIVE' && (
-        <p>
-          {t(
-            'Состояние кошелька не ACTIVE. Возможность отправки не подтверждена.',
-          )}
-        </p>
-      )}
+      <p>{t(accountExplanations[report.accountStatus])}</p>
       {shortfall > 0n ? (
         <p>
           {t('Не хватает для суммы получателям:')}{' '}

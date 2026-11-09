@@ -1,5 +1,23 @@
 /** Russian source messages are typed IDs; editable user content is never translated. */
 export const english = {
+  'Кошелёк сообщает лимит {0} сообщений. Сейчас расчёт поддерживает лимит от 1 до 4. Проверка списка и черновики остаются доступны.':
+    'Your wallet reports a limit of {0} messages. Cost estimates currently support limits from 1 to 4. List validation and drafts remain available.',
+  'Возврат не гарантирован; сетевые расходы возможны. Bounce не отменяет перевод на неверный адрес. При выключенном bounce перевод может пополнить неактивный адрес. Настройка применяется ко всем строкам оценки.':
+    'Return is not guaranteed; network fees may apply. Bounce does not undo a transfer to the wrong address. With bounce off, a transfer may fund an inactive address. This setting applies to every row in the estimate.',
+  'Расчёт недоступен: состояние или версия контракта не поддерживается. Нужен активный (ACTIVE) контракт V4R2 и лимит 1–4 сообщения. Состояние можно посмотреть через «Проверить баланс»; наличие TON само по себе не подтверждает поддержку.':
+    'Cost estimation is unavailable: the contract state or version is unsupported. An active (ACTIVE) V4R2 contract and a limit of 1–4 messages are required. Use “Check balance” to see the account state; holding TON alone does not establish support.',
+  'Активный контракт не подтверждает версию V4R2. Для оценки также нужен лимит 1–4 сообщения; отправка ещё недоступна.':
+    'An active contract does not establish that it is V4R2. Estimates also require a limit of 1–4 messages; sending is still unavailable.',
+  'UNINIT: средства могут быть на адресе, но контракт ещё не развёрнут. Текущий расчёт такой кошелёк не поддерживает.':
+    'UNINIT: the address may hold funds, but its contract has not been deployed. This wallet state is not supported by the current cost estimate.',
+  'FROZEN: контракт заморожен. Текущий расчёт такой кошелёк не поддерживает.':
+    'FROZEN: the contract is frozen. This wallet state is not supported by the current cost estimate.',
+  'NON_EXIST: аккаунт ещё не существует в этой сети. Текущий расчёт недоступен.':
+    'NON_EXIST: the account does not yet exist on this network. Cost estimation is unavailable.',
+  'Эта проверка баланса не включает сетевые расходы и резерв. Полный расчёт выполняется отдельно в блоке «Оценка расходов», если кошелёк поддерживается.':
+    'This balance check excludes network costs and reserve. Use the separate Cost estimate section for the full calculation if the wallet is supported.',
+  'Комиссия сервиса в testnet — 0 TON. Баланс и сетевые расходы проверяются отдельно после входа. Отправка средств недоступна.':
+    'The testnet service fee is 0 TON. Balance and network costs are checked separately after sign-in. Sending funds is unavailable.',
   'Проверяем соединение': 'Checking connection',
   'Запрашиваем состояние сервера. Это займёт несколько секунд.':
     'Checking the server status. This may take a few seconds.',
@@ -250,21 +268,15 @@ export const english = {
   'Строки {0}–{1}: {2} TON': 'Rows {0}–{1}: {2} TON',
   'Сервер отклонил список. Исправьте адреса, суммы и ограничения перед новой проверкой.':
     'The server rejected the list. Check addresses, amounts and limits before trying again.',
-  'Комиссия сервиса в testnet — 0 TON. Баланс можно проверить после входа; сетевые расходы ещё не рассчитаны. Отправка средств недоступна.':
-    'The testnet service fee is 0 TON. Check your balance after signing in; network costs have not been estimated. Sending funds is unavailable.',
   'Баланс кошелька': 'Wallet balance',
   'Проверяем баланс…': 'Checking balance…',
   'Проверить баланс': 'Check balance',
   'Не удалось проверить баланс. Повторите проверку позднее.':
     'Could not check the balance. Try again later.',
-  'Сетевые расходы не учтены. Достаточность средств для отправки ещё не проверена.':
-    'Network costs are excluded. Sufficient funds for sending have not been verified.',
   'Проверка баланса устарела. Проверьте заново.':
     'The balance check has expired. Check again.',
   'Баланс TON:': 'TON balance:',
   'Состояние кошелька: {0}': 'Wallet state: {0}',
-  'Состояние кошелька не ACTIVE. Возможность отправки не подтверждена.':
-    'The wallet state is not ACTIVE. Sending availability is unverified.',
   'Не хватает для суммы получателям:': 'Shortfall for recipient amounts:',
   'Сумма получателям покрывается балансом, без учёта сетевых расходов.':
     'The balance covers recipient amounts, excluding network costs.',
@@ -275,12 +287,8 @@ export const english = {
     'This button sends the list and settings to the server for estimation. Active V4R2 only; no transfers are made.',
   'Возвращать перевод при ошибке получателя (bounce)':
     'Return transfer on recipient error (bounce)',
-  'Настройка применяется ко всем строкам. При выключенном bounce перевод может пополнить неактивный адрес.':
-    'This setting applies to every row. With bounce off, a transfer may fund an inactive address.',
   'Рассчитываем расходы…': 'Estimating costs…',
   'Рассчитать расходы': 'Estimate costs',
-  'Оценка доступна только для активного V4R2 с лимитом 1–4 сообщения.':
-    'Estimates support only active V4R2 wallets with a limit of 1–4 messages.',
   'Расчёт занят. Запросите оценку повторно через несколько секунд.':
     'Estimation is busy. Request another estimate in a few seconds.',
   'Баланс не покрывает сумму переводов. Оценка сетевых расходов не получена.':
