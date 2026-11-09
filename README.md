@@ -2,7 +2,9 @@
 
 Responsive frontend for preparing wallet-signed TON payouts. Public repository; the backend is maintained separately in a private repository.
 
-Current scope: application foundation, responsive start page and API readiness check. Recipient editor B, CSV import, authentication, server history and wallet signing belong to later stages. The current application cannot send funds.
+Current scope: RU/EN recipient editing, CSV import/export, verified testnet login, private drafts, server preparation, balance and native cost estimates, and installable web app. The current application cannot send funds; wallet signing of payouts and payment history remain future work.
+
+Product documentation: [feature catalog and beginner workflow](docs/product/README.md), [glossary](docs/product/glossary.md), and [FAQ draft](docs/product/faq.md). These describe source behavior; publication and device verification are recorded separately.
 
 ## Requirements and quick start
 
@@ -101,7 +103,7 @@ Local signed-fixture/API tests and browser layout checks do not replace real TON
 
 ## Private drafts
 
-After verified testnet login, the private workspace creates empty drafts, lists and opens saved records, renames while preserving recipient data, and confirms deletion. Conflicting versions keep the entered name and offer explicit reload. The shell resets with identity changes and ignores late writes after logout. Full recipient editing, CSV import and payout execution are subsequent stages. Draft storage limits (100 records,200 rows,64KiB) are separate from future payout limits.
+After verified testnet login, the private workspace creates, lists, opens and edits recipient drafts, imports/exports CSV and confirms deletion. Conflicting versions preserve local input and offer explicit reload. The shell resets with identity changes and ignores late writes after logout. Payout execution remains future work. Draft storage limits are 100 records,200 rows and64KiB per request.
 
 ## Native testnet cost estimates
 
