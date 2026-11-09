@@ -4,6 +4,7 @@ import { Button, TextArea, TextField } from '@radix-ui/themes';
 import type { DraftRecipient } from '../../api/generated';
 import { EditorDialog } from './EditorDialog';
 import { textLength } from './validation';
+import { normalizeAmountInput } from './amountInput';
 import styles from './Editor.module.css';
 
 export function RecipientFields({
@@ -49,7 +50,9 @@ export function RecipientFields({
         <TextField.Root
           id={id + 'amount'}
           value={row.amount}
-          onChange={(e) => setRow({ ...row, amount: e.target.value })}
+          onChange={(e) =>
+            setRow({ ...row, amount: normalizeAmountInput(e.target.value) })
+          }
           inputMode="decimal"
           autoComplete="off"
         />

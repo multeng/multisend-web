@@ -6,6 +6,12 @@ Build the next block of PLAN.md: prepare native TON testnet recipients without s
 
 ## Behavior
 
+Manual keyboard input clarification (2026-11-09): inline and details amount
+fields convert a single decimal comma between digits (including a trailing
+comma while typing) to a dot. Canonical stored/submitted amounts still use ASCII
+dots. Mixed/repeated separators and grouping remain invalid; CSV parsing does
+not normalize commas. No numeric conversion, rounding or precision loss.
+
 - Anonymous preparation is memory-only, never uploaded or persisted in browser storage. Explicit CSV export lets users keep unfinished input. Authentication changes never copy private recipients into the anonymous editor. Public editor state remains separate from private drafts.
 - Fields remain address/amount/comment strings matching DraftRecipient. Max200 recipients,128 code points per address/amount,500 per comment. No silent truncation on import. Amounts: ASCII decimal dot, up to9 fractional digits, strictly positive, no exponent/separators/signs/whitespace, below2^120 nanotons. BigInt arithmetic and decimal formatting only. Empty/intermediate input remains editable and saveable as draft.
 - Support raw workchain0/-1 with exactly64 hex digits, and48-character base64/base64url user-friendly addresses, flags and CRC16 per TEP2. Normalize only for duplicate comparisons, never rewrite original input. Testnet-only friendly addresses accepted. Standard friendly addresses without test flag and raw addresses have no assertion of network exclusivity: show a warning, not an invented network claim. No DNS or nonstandard workchains in this block. Non-bounceable and bounceable forms count as duplicates.

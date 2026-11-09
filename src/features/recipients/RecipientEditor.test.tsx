@@ -7,6 +7,65 @@ import type { DraftRecipient } from '../../api/generated';
 import { RecipientEditor } from './RecipientEditor';
 
 const raw = '0:' + '0'.repeat(64);
+it.each([
+  ['1,2.3', '1,2.3'],
+  ['1,2,3', '1,2,3'],
+  ['1 000,5', '1 000,5'],
+  ['0,0000000001', '0.0000000001'],
+  ['1,', '1.'],
+])(
+  'keeps malformed or unfinished manual amount %s editable and blocks preview',
+  async (amount, displayed) => {
+    const { event } = setup([{ address: raw, amount: '1', comment: '' }]);
+    const input = screen.getByLabelText('Сумма получателя 1, TON');
+    await event.clear(input);
+    await event.click(input);
+    await event.paste(amount);
+    expect(
+      screen.getByRole('button', { name: 'Проверить список' }),
+    ).toBeDisabled();
+    // Do not truncate, round or strip grouping characters to make input valid.
+    expect(input).toHaveValue(displayed);
+  },
+);
+it('accepts decimal comma inline as exact canonical nanotons and invalidates preview', async () => {
+  const { event, change } = setup([{ address: raw, amount: '1', comment: '' }]);
+  await event.click(screen.getByRole('button', { name: 'Проверить список' }));
+  const input = screen.getByLabelText('Сумма получателя 1, TON');
+  await event.clear(input);
+  await event.type(input, '0,000000001');
+  expect(input).toHaveValue('0.000000001');
+  expect(change).toHaveBeenLastCalledWith([
+    { address: raw, amount: '0.000000001', comment: '' },
+  ]);
+  expect(
+    screen.queryByRole('region', { name: 'Предпросмотр списка' }),
+  ).not.toBeInTheDocument();
+  await event.click(screen.getByRole('button', { name: 'Проверить список' }));
+  expect(
+    screen.getByRole('region', { name: 'Предпросмотр списка' }),
+  ).toHaveTextContent('0.000000001 TON');
+});
+it('accepts decimal comma in recipient details without rounding', async () => {
+  const { event, change } = setup();
+  await event.click(
+    screen.getByRole('button', { name: 'Добавить получателя' }),
+  );
+  const dialog = screen.getByRole('dialog');
+  await event.type(within(dialog).getByLabelText('Адрес получателя'), raw);
+  await event.type(
+    within(dialog).getByLabelText('Сумма, TON'),
+    '123,123456789',
+  );
+  await event.click(within(dialog).getByRole('button', { name: 'Добавить' }));
+  expect(change).toHaveBeenLastCalledWith([
+    { address: raw, amount: '123.123456789', comment: '' },
+  ]);
+  await event.click(screen.getByRole('button', { name: 'Проверить список' }));
+  expect(
+    screen.getByRole('region', { name: 'Предпросмотр списка' }),
+  ).toHaveTextContent('123.123456789 TON');
+});
 function setup(initial: DraftRecipient[] = []) {
   const change = vi.fn();
   function Harness() {
