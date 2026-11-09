@@ -33,6 +33,12 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Frame-Options = "DENY"
 
+# Serve the PWA manifest with its declared media type.
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
 # Wallets must be able to fetch public metadata from any origin.
 [[headers]]
   for = "/tonconnect-manifest.json"
