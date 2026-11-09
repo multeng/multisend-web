@@ -7,6 +7,7 @@ import { downloadCSV } from './csv';
 import { EditorDialog } from './EditorDialog';
 import { RecipientFields } from './RecipientFields';
 import { formatAmount, validateRecipients } from './validation';
+import { normalizeAmountInput } from './amountInput';
 import styles from './Editor.module.css';
 import { PreparationPanel } from '../payouts/PreparationPanel';
 
@@ -112,7 +113,9 @@ export function RecipientEditor({
                 onChange={(e) =>
                   change(
                     value.map((r, i) =>
-                      i === index ? { ...r, amount: e.target.value } : r,
+                      i === index
+                        ? { ...r, amount: normalizeAmountInput(e.target.value) }
+                        : r,
                     ),
                   )
                 }
